@@ -1,7 +1,11 @@
 package com.example.demo.User;
 
+import com.example.demo.Opening.Opening;
 import com.example.demo.Record.Record;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -18,10 +22,17 @@ public class User {
     private String username;
     private String password;
 
-    // ManyToOne veza sa Record entitetom
     @ManyToOne
-    @JoinColumn(name = "record_id", nullable = false) // FK na Record tabelu
+    @JoinColumn(name = "record_id", nullable = false)
     private Record record;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_openings",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "opening_id")
+    )
+    private List<Opening> openings = new ArrayList<>();
 
     public User() { }
 
@@ -34,67 +45,25 @@ public class User {
         this.record = record;
     }
 
-    public User(String firstName, String lastName, String role, String username, String password) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.role = role;
-        this.username = username;
-        this.password = password;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public List<Opening> getOpenings() {
+        return openings;
     }
 
-    public Record getRecord() {
-        return record;
+    public void setOpenings(List<Opening> openings) {
+        this.openings = openings;
     }
 
-    public void setRecord(Record record) {
-        this.record = record;
+    public void addOpening(Opening opening) {
+        this.openings.add(opening);
+        opening.getUsers().add(this);
+    }
+
+    public void removeOpening(Opening opening) {
+        this.openings.remove(opening);
+        opening.getUsers().remove(this);
     }
 }
