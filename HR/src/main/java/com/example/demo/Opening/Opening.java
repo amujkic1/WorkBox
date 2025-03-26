@@ -3,6 +3,7 @@ package com.example.demo.Opening;
 import com.example.demo.Application.Application;
 import com.example.demo.User.User;
 import jakarta.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -20,11 +21,14 @@ public class Opening {
     private String result;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false) // FK na tabelu User
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @OneToMany(mappedBy = "opening", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Application> applications;
+
+    @ManyToMany(mappedBy = "openings")
+    private List<User> users = new ArrayList<>();
 
     public Opening() {}
 
@@ -40,85 +44,15 @@ public class Opening {
         this.user = user;
     }
 
-    public Opening(String openingName, String description, User user) {
-        this.openingName = openingName;
-        this.description = description;
-        this.user = user;
-    }
-
     public Long getId() {
         return id;
     }
 
-    public String getOpeningName() {
-        return openingName;
+    public List<User> getUsers() {
+        return users;
     }
 
-    public void setOpeningName(String openingName) {
-        this.openingName = openingName;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getConditions() {
-        return conditions;
-    }
-
-    public void setConditions(String conditions) {
-        this.conditions = conditions;
-    }
-
-    public String getBenefits() {
-        return benefits;
-    }
-
-    public void setBenefits(String benefits) {
-        this.benefits = benefits;
-    }
-
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
-
-    public String getResult() {
-        return result;
-    }
-
-    public void setResult(String result) {
-        this.result = result;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public List<Application> getApplications() {
-        return applications;
-    }
-
-    public void setApplications(List<Application> applications) {
-        this.applications = applications;
+    public void setUsers(List<User> users) {
+        this.users = users;
     }
 }
