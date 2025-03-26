@@ -42,8 +42,7 @@ public class Task {
 
     public Task() { }
 
-    // Constructor with all attributes
-    public Task(Date datumPocetka, Date datumZavrsetka, Date datumPredaje, String naziv, String opis, String status, Projekat projekat, Korisnik korisnik, Korisnik vodja) {
+    public Task(Date datumPocetka, Date datumZavrsetka, Date datumPredaje, String naziv, String opis, String status, Projekat projekat, Korisnik korisnik) {
         this.datumPocetka = datumPocetka;
         this.datumZavrsetka = datumZavrsetka;
         this.datumPredaje = datumPredaje;
@@ -54,7 +53,6 @@ public class Task {
         this.korisnik = korisnik;
     }
 
-    // Getters and Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 

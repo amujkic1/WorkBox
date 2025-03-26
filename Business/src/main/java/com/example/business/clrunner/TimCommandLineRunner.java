@@ -14,7 +14,6 @@ public class TimCommandLineRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Kreiranje tima
         Tim tim1 = new Tim();
         tim1.setNaziv("Razvojni Tim");
         tim1.setVodja("Ajna");
