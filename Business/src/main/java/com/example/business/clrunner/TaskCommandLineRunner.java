@@ -1,18 +1,20 @@
 package com.example.business.clrunner;
 
-import com.example.business.model.Korisnik;
-import com.example.business.model.Projekat;
+import com.example.business.model.Project;
+import com.example.business.model.User;
 import com.example.business.model.Task;
-import com.example.business.repository.KorisnikRepository;
-import com.example.business.repository.ProjekatRepository;
+import com.example.business.repository.UserRepository;
+import com.example.business.repository.ProjectRepository;
 import com.example.business.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.Optional;
 
+@Order(5)
 @Component
 public class TaskCommandLineRunner implements CommandLineRunner {
 
@@ -20,29 +22,29 @@ public class TaskCommandLineRunner implements CommandLineRunner {
     private TaskRepository taskRepository;
 
     @Autowired
-    private KorisnikRepository korisnikRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    private ProjekatRepository projekatRepository;
+    private ProjectRepository projectRepository;
 
     @Override
     public void run(String... args) throws Exception {
-        Optional<Korisnik> korisnikOpt = korisnikRepository.findById(1);
-        Optional<Projekat> projekatOpt = projekatRepository.findById(1);
+        Optional<User> userOpt = userRepository.findById(1);
+        Optional<Project> projectOpt = projectRepository.findById(1);
 
-        if (korisnikOpt.isPresent() && projekatOpt.isPresent()) {
-            Korisnik korisnik = korisnikOpt.get();
-            Projekat projekat = projekatOpt.get();
+        if (userOpt.isPresent() && projectOpt.isPresent()) {
+            User user = userOpt.get();
+            Project project = projectOpt.get();
 
-            Task task1 = new Task(new Date(), new Date(), null, "Task 1", "Opis taska 1", "U toku", projekat, korisnik);
+            Task task1 = new Task(new Date(), new Date(), null, "Task 1", "Opis taska 1", "U toku", project, user);
             taskRepository.save(task1);
 
-            Task task2 = new Task(new Date(), new Date(), null, "Task 2", "Opis taska 2", "Zavrsen", projekat, korisnik);
+            Task task2 = new Task(new Date(), new Date(), null, "Task 2", "Opis taska 2", "Zavrsen", project, user);
             taskRepository.save(task2);
 
-            System.out.println("Taskovi su uspjesno dodani u bazu.");
+            System.out.println("Tasks added successfully");
         } else {
-            System.out.println("Nema dostupnog korisnika ili projekta u bazi, dodavanje taskova nije moguce.");
+            System.out.println("No available user or project");
         }
     }
 }

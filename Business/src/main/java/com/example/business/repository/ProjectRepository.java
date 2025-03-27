@@ -1,9 +1,9 @@
 package com.example.business.repository;
 
-import com.example.business.model.Projekat;
+import com.example.business.model.Project;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ProjekatRepository extends JpaRepository<Projekat,Integer> {
+public interface ProjectRepository extends JpaRepository<Project,Integer> {
 }
