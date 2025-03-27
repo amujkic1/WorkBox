@@ -26,20 +26,6 @@ public class TaskService {
         return taskRepository.save(task);
     }
 
-    public Task updateTask(int id, Task taskDetails) {
-        return taskRepository.findById(id).map(task -> {
-            task.setDatumPocetka(taskDetails.getDatumPocetka());
-            task.setDatumZavrsetka(taskDetails.getDatumZavrsetka());
-            task.setDatumPredaje(taskDetails.getDatumPredaje());
-            task.setNaziv(taskDetails.getNaziv());
-            task.setOpis(taskDetails.getOpis());
-            task.setStatus(taskDetails.getStatus());
-            task.setProjekat(taskDetails.getProjekat());
-            task.setKorisnik(taskDetails.getKorisnik());
-            return taskRepository.save(task);
-        }).orElseThrow(() -> new RuntimeException("Task not found"));
-    }
-
     public void deleteTask(int id) {
         taskRepository.deleteById(id);
     }
