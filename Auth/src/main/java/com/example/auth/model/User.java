@@ -19,8 +19,7 @@ public class User {
     @JoinColumn(name="role_id",nullable = false)
     private Role role;
 
-    // @GeneratedValue(strategy = GenerationType.UUID)
-    // private UUID uuid;
+    private UUID uuid;
 
     public User(){}
     public User(String firstName, String lastName, String username, String password, Role role) {
@@ -29,6 +28,7 @@ public class User {
         this.username = username;
         this.password = password;
         this.role = role;
+        this.uuid = UUID.randomUUID();
     }
 
     public Integer getId() {
