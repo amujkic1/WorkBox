@@ -1,6 +1,5 @@
-package com.example.demo.Request;
+package com.example.demo.model;
 
-import com.example.demo.Record.Record;
 import jakarta.persistence.*;
 
 import java.util.Date;

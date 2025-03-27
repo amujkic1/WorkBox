@@ -1,6 +1,6 @@
-package com.example.demo.Record;
+package com.example.demo.service;
 
-import com.example.demo.Application.Application;
+import com.example.demo.model.Record;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -16,21 +16,21 @@ public class RecordService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Record insert(Record record) {
+    public com.example.demo.model.Record insert(com.example.demo.model.Record record) {
         entityManager.persist(record);
         return record;
     }
 
-    public Record findById(int id) {
-        return entityManager.find(Record.class, id);
+    public com.example.demo.model.Record findById(int id) {
+        return entityManager.find(com.example.demo.model.Record.class, id);
     }
 
-    public List<Record> findAll() {
-        TypedQuery<Record> query = entityManager.createQuery("SELECT r FROM Record r", Record.class);
+    public List<com.example.demo.model.Record> findAll() {
+        TypedQuery<com.example.demo.model.Record> query = entityManager.createQuery("SELECT r FROM Record r", com.example.demo.model.Record.class);
         return query.getResultList();
     }
 
-    public Record update(Record record) {
+    public com.example.demo.model.Record update(com.example.demo.model.Record record) {
         return entityManager.merge(record);
     }
 

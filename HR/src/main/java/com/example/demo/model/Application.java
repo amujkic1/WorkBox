@@ -1,6 +1,5 @@
-package com.example.demo.Application;
+package com.example.demo.model;
 
-import com.example.demo.Opening.Opening;
 import jakarta.persistence.*;
 
 import java.util.Date;

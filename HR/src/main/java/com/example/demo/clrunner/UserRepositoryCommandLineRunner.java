@@ -1,9 +1,11 @@
-package com.example.demo.User;
+package com.example.demo.clrunner;
 
-import com.example.demo.Opening.Opening;
-import com.example.demo.Opening.OpeningRepository;
-import com.example.demo.Record.Record;
-import com.example.demo.Record.RecordRepository;
+import com.example.demo.model.Opening;
+import com.example.demo.model.User;
+import com.example.demo.repository.OpeningRepository;
+import com.example.demo.model.Record;
+import com.example.demo.repository.RecordRepository;
+import com.example.demo.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

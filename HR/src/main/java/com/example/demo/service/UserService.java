@@ -1,5 +1,6 @@
-package com.example.demo.User;
+package com.example.demo.service;
 
+import com.example.demo.model.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;

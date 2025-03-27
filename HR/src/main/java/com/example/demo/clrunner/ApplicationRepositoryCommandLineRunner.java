@@ -1,7 +1,9 @@
-package com.example.demo.Application;
+package com.example.demo.clrunner;
 
-import com.example.demo.Opening.Opening;
-import com.example.demo.Opening.OpeningRepository;
+import com.example.demo.model.Opening;
+import com.example.demo.repository.OpeningRepository;
+import com.example.demo.model.Application;
+import com.example.demo.repository.ApplicationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

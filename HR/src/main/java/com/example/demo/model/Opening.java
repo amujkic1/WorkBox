@@ -1,7 +1,5 @@
-package com.example.demo.Opening;
+package com.example.demo.model;
 
-import com.example.demo.Application.Application;
-import com.example.demo.User.User;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
