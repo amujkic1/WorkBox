@@ -39,4 +39,12 @@ public class Team {
     public void setTeamLeader(String teamLeader) {
         this.teamLeader = teamLeader;
     }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 }
