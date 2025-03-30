@@ -23,6 +23,18 @@ public class User {
     @JoinColumn(name = "team_id")
     private Team team;
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setUuid() {
+        this.uuid = UUID.randomUUID();
+    }
+
     public User() { }
 
     public User(String firstName, String lastName, Team team) {
