@@ -40,14 +40,6 @@ public class UserController {
         return userModelAssembler.toModel(user);
     }
 
-    @PostMapping("/users")
-    ResponseEntity<?> newUser(@RequestBody User newUser) {
-        EntityModel<User> entityModel = userModelAssembler.toModel(userRepository.save(newUser));
-        return ResponseEntity
-                .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
-                .body(entityModel);
-    }
-
     @PutMapping("users/{id}")
     ResponseEntity<?>replaceUser(@RequestBody User newUser, @PathVariable Integer id) {
         User updatedUser = userRepository.findById(id)
