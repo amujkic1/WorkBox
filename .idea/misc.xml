@@ -10,6 +10,7 @@
         <option value="$PROJECT_DIR$/Business/pom.xml" />
         <option value="$PROJECT_DIR$/HR/pom.xml" />
         <option value="$PROJECT_DIR$/Finance/pom.xml" />
+        <option value="$PROJECT_DIR$/Auth/pom.xml" />
       </list>
     </option>
   </component>

@@ -1,6 +1,8 @@
 package com.example.hr.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,12 +12,31 @@ public class Opening {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @NotBlank(message = "Opening name cannot be blank")
+    @Size(min = 2, max = 100, message = "Opening name must be between 2 and 100 characters")
     private String openingName;
+
+    @NotBlank(message = "Description cannot be blank")
+    @Size(min = 10, max = 500, message = "Description must be between 10 and 500 characters")
     private String description;
+
+    @NotBlank(message = "Conditions cannot be blank")
     private String conditions;
+
+    @NotBlank(message = "Benefits cannot be blank")
     private String benefits;
+
+    @NotNull(message = "Start date cannot be null")
+    @PastOrPresent(message = "Start date must be in the past or present")
     private Date startDate;
+
+    @NotNull(message = "End date cannot be null")
+    @FutureOrPresent(message = "End date must be in the future or present")
     private Date endDate;
+
+    @NotBlank(message = "Result cannot be blank")
+    @Size(min = 2, max = 50, message = "Result must be between 2 and 50 characters")
     private String result;
 
     @ManyToOne

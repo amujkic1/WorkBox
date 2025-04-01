@@ -3,15 +3,28 @@ package com.example.hr.model;
 import jakarta.persistence.*;
 
 import java.util.Date;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+
 
 @Entity
 public class Request {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @NotBlank(message = "Request type cannot be blank")
     private String type;
+
+    @NotBlank(message = "Text cannot be blank")
     private String text;
+
+    @NotNull(message = "Date cannot be null")
+    @PastOrPresent(message = "Date must be in the past or present")
     private Date date;
+
+    @NotBlank(message = "Status cannot be blank")
     private String status;
 
     @ManyToOne
