@@ -1,5 +1,6 @@
 package com.example.demo.clrunner;
 
+import com.example.demo.controller.CheckInRecordController;
 import com.example.demo.models.CheckInRecord;
 import com.example.demo.models.User;
 import com.example.demo.repository.CheckInRecordRepository;
