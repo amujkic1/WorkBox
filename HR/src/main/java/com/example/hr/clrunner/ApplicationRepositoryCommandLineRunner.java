@@ -33,9 +33,9 @@ public class ApplicationRepositoryCommandLineRunner implements CommandLineRunner
 
         Opening opening = openings.get(0);
 
-        Application app1 = new Application(new Date(), "Mujo", "Mujić", "mujo.mujic@gmail.com", "061-123-456", "https://docs.com/cv1", "Pending", 85.0, opening);
-        Application app2 = new Application(new Date(), "Haso", "Hasić", "haso.hasic@gmail.com", "062-456-789", "https://docs.com/cv2", "Accepted", 92.5, opening);
-        Application app3 = new Application(new Date(), "Fata", "Fatić", "fata.fatic@gmail.com", "063-789-012", "https://docs.com/cv3", "Rejected", 74.0, opening);
+        Application app1 = new Application(new Date(), "Mujo", "Mujić", "mujo.mujic@gmail.com", "+061123456", "https://docs.com/cv1", "Pending", 85.0, opening);
+        Application app2 = new Application(new Date(), "Haso", "Hasić", "haso.hasic@gmail.com", "+062456789", "https://docs.com/cv2", "Accepted", 92.5, opening);
+        Application app3 = new Application(new Date(), "Fata", "Fatić", "fata.fatic@gmail.com", "+063789012", "https://docs.com/cv3", "Rejected", 74.0, opening);
 
         applicationRepository.save(app1);
         applicationRepository.save(app2);

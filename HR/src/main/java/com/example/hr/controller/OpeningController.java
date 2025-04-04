@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,54 +26,37 @@ public class OpeningController {
 
     private final OpeningRepository openingRepository;
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
-    public OpeningController(OpeningRepository openingRepository, UserRepository userRepository) {
+    public OpeningController(OpeningRepository openingRepository, UserRepository userRepository, ModelMapper modelMapper) {
         this.openingRepository = openingRepository;
         this.userRepository = userRepository;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping("/openings")
     @Operation(summary = "Retrieve all openings", description = "Returns a list of all job openings")
-    List<OpeningDTO> getAllOpenings(){
+    List<OpeningDTO> getAllOpenings() {
         return openingRepository.findAll().stream()
-                .map(opening -> new OpeningDTO(
-                        opening.getId(),
-                        opening.getOpeningName(),
-                        opening.getDescription(),
-                        opening.getConditions(),
-                        opening.getBenefits(),
-                        opening.getStartDate(),
-                        opening.getEndDate(),
-                        opening.getResult(),
-                        opening.getUser().getId()
-                )).collect(Collectors.toList());
+                .map(opening -> modelMapper.map(opening, OpeningDTO.class))
+                .collect(Collectors.toList());
     }
 
-    @GetMapping("/opening/{id}")
+    @GetMapping("/openings/{id}")
     @Operation(summary = "Retrieve an opening by ID", description = "Fetches details of a specific opening by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Opening found"),
             @ApiResponse(responseCode = "404", description = "Opening not found")
     })
     @ExceptionHandler(OpeningNotFoundException.class)
-    OpeningDTO getOpeningById(@PathVariable Integer id){
+    OpeningDTO getOpeningById(@PathVariable Integer id) {
         Opening opening = openingRepository.findById(id)
                 .orElseThrow(() -> new OpeningNotFoundException(id));
 
-        return new OpeningDTO(
-                opening.getId(),
-                opening.getOpeningName(),
-                opening.getDescription(),
-                opening.getConditions(),
-                opening.getBenefits(),
-                opening.getStartDate(),
-                opening.getEndDate(),
-                opening.getResult(),
-                opening.getUser().getId()
-        );
+        return modelMapper.map(opening, OpeningDTO.class);
     }
 
-    @PostMapping("/opening")
+    @PostMapping("/openings")
     @Operation(summary = "Create a new opening", description = "Adds a new opening to the system")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Opening created"),
@@ -82,23 +66,15 @@ public class OpeningController {
         User user = userRepository.findById(openingDTO.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(openingDTO.getUserId()));
 
-        Opening newOpening = new Opening(
-                openingDTO.getOpeningName(),
-                openingDTO.getDescription(),
-                openingDTO.getConditions(),
-                openingDTO.getBenefits(),
-                openingDTO.getStartDate(),
-                openingDTO.getEndDate(),
-                openingDTO.getResult(),
-                user
-        );
+        Opening newOpening = modelMapper.map(openingDTO, Opening.class);
+        newOpening.setUser(user);
 
         Opening savedOpening = openingRepository.save(newOpening);
 
-        return openingDTO;
+        return modelMapper.map(savedOpening, OpeningDTO.class);
     }
 
-    @PutMapping("/opening/{id}")
+    @PutMapping("/openings/{id}")
     @Operation(summary = "Update an opening", description = "Updates an existing job opening by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Opening updated"),
@@ -111,31 +87,15 @@ public class OpeningController {
         User user = userRepository.findById(openingDTO.getUserId())
                 .orElseThrow(() -> new UserNotFoundException(openingDTO.getUserId()));
 
-        opening.setOpeningName(openingDTO.getOpeningName() != null ? openingDTO.getOpeningName() : opening.getOpeningName());
-        opening.setDescription(openingDTO.getDescription() != null ? openingDTO.getDescription() : opening.getDescription());
-        opening.setConditions(openingDTO.getConditions() != null ? openingDTO.getConditions() : opening.getConditions());
-        opening.setBenefits(openingDTO.getBenefits() != null ? openingDTO.getBenefits() : opening.getBenefits());
-        opening.setStartDate(openingDTO.getStartDate() != null ? openingDTO.getStartDate() : opening.getStartDate());
-        opening.setEndDate(openingDTO.getEndDate() != null ? openingDTO.getEndDate() : opening.getEndDate());
-        opening.setResult(openingDTO.getResult() != null ? openingDTO.getResult() : opening.getResult());
+        modelMapper.map(openingDTO, opening);
         opening.setUser(user);
 
         Opening updatedOpening = openingRepository.save(opening);
 
-        return new OpeningDTO(
-                updatedOpening.getId(),
-                updatedOpening.getOpeningName(),
-                updatedOpening.getDescription(),
-                updatedOpening.getConditions(),
-                updatedOpening.getBenefits(),
-                updatedOpening.getStartDate(),
-                updatedOpening.getEndDate(),
-                updatedOpening.getResult(),
-                updatedOpening.getUser().getId()
-        );
+        return modelMapper.map(updatedOpening, OpeningDTO.class);
     }
 
-    @DeleteMapping("/opening/{id}")
+    @DeleteMapping("/openings/{id}")
     @Operation(summary = "Delete an opening", description = "Deletes a job opening by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Opening deleted"),

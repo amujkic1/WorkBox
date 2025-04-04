@@ -33,6 +33,15 @@ public class Request {
 
     protected Request() {}
 
+    public Request(Integer id, String type, String text, Date date, String status, Record record) {
+        this.id = id;
+        this.type = type;
+        this.text = text;
+        this.date = date;
+        this.status = status;
+        this.record = record;
+    }
+
     public Request(String type, String text, Date date, String status, Record record) {
         this.type = type;
         this.text = text;

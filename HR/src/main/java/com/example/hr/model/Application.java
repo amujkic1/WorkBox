@@ -64,6 +64,10 @@ public class Application {
         return id;
     }
 
+    public void setId(Integer id){
+        this.id = id;
+    }
+
     public Date getDate() {
         return date;
     }

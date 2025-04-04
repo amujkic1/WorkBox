@@ -2,13 +2,13 @@ package com.example.hr.controller;
 
 import com.example.hr.dto.RecordDTO;
 import com.example.hr.exception.RecordNotFoundException;
-import com.example.hr.exception.RequestNotFoundException;
 import com.example.hr.model.Record;
 import com.example.hr.repository.RecordRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,87 +21,76 @@ import java.util.stream.Collectors;
 public class RecordController {
 
     private final RecordRepository recordRepository;
+    private final ModelMapper modelMapper;
 
-    public RecordController(RecordRepository recordRepository) {
+    public RecordController(RecordRepository recordRepository, ModelMapper modelMapper) {
         this.recordRepository = recordRepository;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping("/records")
     @Operation(summary = "Retrieve all records", description = "Returns a list of all employee records")
-    List<RecordDTO> getAllRecords(){
+    List<RecordDTO> getAllRecords() {
         return recordRepository.findAll().stream()
-                .map(record -> new RecordDTO(
-                        record.getId(),
-                        record.getEmploymentDate(),
-                        record.getStatus(),
-                        record.getWorkingHours()
-                )).collect(Collectors.toList());
+                .map(record -> modelMapper.map(record, RecordDTO.class))
+                .collect(Collectors.toList());
     }
 
-    @GetMapping("/record/{id}")
+    @GetMapping("/records/{id}")
     @Operation(summary = "Retrieve a record by ID", description = "Fetches details of a specific record by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Record found"),
             @ApiResponse(responseCode = "404", description = "Record not found")
     })
     @ExceptionHandler(RecordNotFoundException.class)
-    RecordDTO getRecordById(@PathVariable Integer id){
+    RecordDTO getRecordById(@PathVariable Integer id) {
         Record record = recordRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(id));
-        return new RecordDTO(
-                record.getId(),
-                record.getEmploymentDate(),
-                record.getStatus(),
-                record.getWorkingHours()
-        );
+        return modelMapper.map(record, RecordDTO.class);
     }
 
-    @PostMapping("/record")
+    @PostMapping("/records")
     @Operation(summary = "Create a new record", description = "Adds a new employee record to the system")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Record created"),
             @ApiResponse(responseCode = "400", description = "Invalid input data")
     })
-    Record postRecord(@RequestBody Record record){
-        return recordRepository.save(record);
+    RecordDTO postRecord(@RequestBody RecordDTO recordDTO) {
+        Record record = modelMapper.map(recordDTO, Record.class);
+        Record savedRecord = recordRepository.save(record);
+        return modelMapper.map(savedRecord, RecordDTO.class);
     }
 
-    @PutMapping("/record/{id}")
+    @PutMapping("/records/{id}")
     @Operation(summary = "Update a record", description = "Updates an existing employee record by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Record updated"),
             @ApiResponse(responseCode = "404", description = "Record not found")
     })
-    public Record updateRecord(@PathVariable Integer id, @RequestBody Record updatedRecord) {
-        return recordRepository.findById(id).map(record -> {
+    public RecordDTO updateRecord(@PathVariable Integer id, @RequestBody RecordDTO recordDTO) {
+        Record record = recordRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException(id));
 
-            record.setJMBG(updatedRecord.getJMBG());
-            record.setBirthDate(updatedRecord.getBirthDate());
-            record.setContactNumber(updatedRecord.getContactNumber());
-            record.setAddress(updatedRecord.getAddress());
-            record.setEmail(updatedRecord.getEmail());
-            record.setEmploymentDate(updatedRecord.getEmploymentDate());
-            record.setStatus(updatedRecord.getStatus());
-            record.setWorkingHours(updatedRecord.getWorkingHours());
+        modelMapper.map(recordDTO, record);
 
-            return recordRepository.save(record);
-        }).orElseThrow(() -> new RecordNotFoundException(id));
+        Record updatedRecord = recordRepository.save(record);
+        return modelMapper.map(updatedRecord, RecordDTO.class);
     }
 
-    @DeleteMapping("record/{id}")
+    @DeleteMapping("records/{id}")
     @Operation(summary = "Delete a record", description = "Deletes an employee record by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Request deleted"),
             @ApiResponse(responseCode = "404", description = "Request not found")
     })
-    public ResponseEntity<String> deleteRecord(@PathVariable Integer id){
-        if(!recordRepository.existsById(id)) {
+    public ResponseEntity<String> deleteRecord(@PathVariable Integer id) {
+        if (!recordRepository.existsById(id)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Record with id " + id + " not found");
         }
 
         recordRepository.deleteById(id);
-        return ResponseEntity.ok("Record with id " + id + "deleted successfully");
+        return ResponseEntity.ok("Record with id " + id + " deleted successfully");
     }
 
 }
