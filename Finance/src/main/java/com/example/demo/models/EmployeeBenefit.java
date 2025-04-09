@@ -1,6 +1,7 @@
 package com.example.demo.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "employee_benefit")
@@ -76,4 +77,5 @@ public class EmployeeBenefit {
     public void setUser(User user) {
         this.user = user;
     }
+
 }

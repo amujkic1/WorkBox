@@ -1,6 +1,9 @@
 package com.example.demo.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 import java.util.UUID;
 
 @Entity
@@ -10,9 +13,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
 
+    @Size(min = 2, max = 50, message = "Name must have between 2 i 50 characters")
     @Column(name="first_name")
     private String firstName;
 
+    @Size(min = 2, max = 50, message = "Last name must have between 2 i 50 characters")
     @Column(name="last_name")
     private String lastName;
 

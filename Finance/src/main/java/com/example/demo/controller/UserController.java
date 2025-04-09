@@ -1,11 +1,10 @@
 package com.example.demo.controller;
 
 import com.example.demo.controller.assembler.UserModelAssembler;
-import com.example.demo.exception.CheckInRecordNotFoundException;
 import com.example.demo.exception.UserNotFoundException;
-import com.example.demo.models.CheckInRecord;
 import com.example.demo.models.User;
 import com.example.demo.repository.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -45,8 +44,9 @@ public class UserController {
         return userModelAssembler.toModel(user);
     }
 
+
     @PostMapping("/user")
-    public ResponseEntity<?> newCheckInRecord(@RequestBody User newUser){
+    public ResponseEntity<?> newCheckInRecord(@Valid @RequestBody User newUser){
         EntityModel<User> entityModel = userModelAssembler.toModel(userRepository.save(newUser));
 
         return ResponseEntity.
@@ -54,8 +54,9 @@ public class UserController {
                 body(entityModel);
     }
 
+
     @PutMapping("/user/{id}")
-    public ResponseEntity<?> replaceUser(@RequestBody User newUser, @PathVariable Integer id){
+    public ResponseEntity<?> replaceUser(@RequestBody @Valid User newUser, @PathVariable Integer id){
         User updatedUser = userRepository.findById(id)
                 .map(user -> {
                     user.setFirstName(newUser.getFirstName());
@@ -74,9 +75,11 @@ public class UserController {
                 .body(entityModel);
     }
 
+
     @DeleteMapping("/user/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Integer id){
         userRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
 }

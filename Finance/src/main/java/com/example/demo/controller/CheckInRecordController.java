@@ -5,6 +5,7 @@ import com.example.demo.exception.CheckInRecordNotFoundException;
 import com.example.demo.models.CheckInRecord;
 import com.example.demo.repository.CheckInRecordRepository;
 import com.example.demo.repository.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -48,7 +49,7 @@ public class CheckInRecordController {
     }
 
     @PostMapping("/check_in_record")
-    public ResponseEntity<?> newCheckInRecord(@RequestBody CheckInRecord newcheckInRecord){
+    public ResponseEntity<?> newCheckInRecord(@RequestBody @Valid CheckInRecord newcheckInRecord){
         EntityModel<CheckInRecord> entityModel = checkInRecordModelAssembler.toModel(checkInRecordRepository.save(newcheckInRecord));
 
         return ResponseEntity.
@@ -57,7 +58,7 @@ public class CheckInRecordController {
     }
 
     @PutMapping("/check_in_record/{id}")
-    public ResponseEntity<?> replaceCheckInRecord(@RequestBody CheckInRecord newcheckInRecord, @PathVariable Integer id){
+    public ResponseEntity<?> replaceCheckInRecord(@RequestBody @Valid CheckInRecord newcheckInRecord, @PathVariable Integer id){
         CheckInRecord updatedCheckInRecord = checkInRecordRepository.findById(id)
                 .map(checkInRecord -> {
                     checkInRecord.setCheckInDate(newcheckInRecord.getCheckInDate());
