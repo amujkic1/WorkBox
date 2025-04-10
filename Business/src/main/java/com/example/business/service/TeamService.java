@@ -26,9 +26,12 @@ public class TeamService {
         return teamRepository.findById(id);
     }
 
-
     public void deleteTim(Integer id) {
         teamRepository.deleteById(id);
+    }
+
+    public List<Team> getTeamsByLeader(String leaderName) {
+        return teamRepository.findTeamsByLeader(leaderName);
     }
 }
 

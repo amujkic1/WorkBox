@@ -4,6 +4,7 @@ import com.example.business.controller.assembler.TeamModelAssembler;
 import com.example.business.exception.TeamNotFoundException;
 import com.example.business.model.Team;
 import com.example.business.repository.TeamRepository;
+import com.example.business.service.TeamService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,11 +28,13 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping("/teams")
 public class TeamController {
     private final TeamRepository teamRepository;
+    private final TeamService teamService;
     private  final TeamModelAssembler teamModelAssembler;
     private final ObjectMapper objectMapper;
 
-    public TeamController(TeamRepository teamRepository, TeamModelAssembler teamModelAssembler, ObjectMapper objectMapper) {
+    public TeamController(TeamRepository teamRepository, TeamService teamService, TeamModelAssembler teamModelAssembler, ObjectMapper objectMapper) {
         this.teamRepository = teamRepository;
+        this.teamService = teamService;
         this.teamModelAssembler = teamModelAssembler;
         this.objectMapper = objectMapper;
     }
@@ -100,4 +103,13 @@ public class TeamController {
         JsonNode patched = patch.apply(objectMapper.convertValue(targetTeam, JsonNode.class));
         return objectMapper.treeToValue(patched, Team.class);
     }
+
+    @GetMapping("/leader/{name}")
+    public CollectionModel<EntityModel<Team>> getTeamsByLeader(@PathVariable String name) {
+        List<EntityModel<Team>> teams = teamService.getTeamsByLeader(name).stream()
+                .map(teamModelAssembler::toModel)
+                .collect(Collectors.toList());
+        return CollectionModel.of(teams, linkTo(methodOn(TeamController.class).all()).withSelfRel());
+    }
+
     }
