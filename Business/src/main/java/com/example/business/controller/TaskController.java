@@ -8,6 +8,8 @@ import com.example.business.model.User;
 import com.example.business.repository.ProjectRepository;
 import com.example.business.repository.TaskRepository;
 import com.example.business.repository.UserRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.fge.jsonpatch.JsonPatch;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -101,6 +103,5 @@ public class TaskController {
         taskRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
-
 
 }

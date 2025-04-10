@@ -1,6 +1,7 @@
 package com.example.business.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Date;
 
@@ -12,6 +13,7 @@ public class Project {
     private Integer id;
 
     @Column(name="title")
+    @NotNull(message = "Title cannot be null")
     private String title;
 
     @Column(name="publication_date")

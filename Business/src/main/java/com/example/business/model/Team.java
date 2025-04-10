@@ -1,8 +1,7 @@
 package com.example.business.model;
 
 import jakarta.persistence.*;
-
-import java.util.Set;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "Team")
@@ -12,9 +11,11 @@ public class Team {
     private Integer id;
 
     @Column(name="name")
+    @NotNull(message = "Name cannot be null")
     private String name;
 
     @Column(name="team_leader")
+    @NotNull(message = "Team leader cannot be null")
     private String teamLeader;
 
     public Team() { }

@@ -1,6 +1,7 @@
 package com.example.business.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
@@ -12,9 +13,11 @@ public class User {
     private Integer id;
 
     @Column(name="first_name")
+    @NotNull(message = "First name cannot be null")
     private String firstName;
 
     @Column(name="last_name")
+    @NotNull(message = "Last name cannot be null")
     private String lastName;
 
     private UUID uuid;

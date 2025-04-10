@@ -1,6 +1,7 @@
 package com.example.business.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Date;
 
@@ -24,6 +25,7 @@ public class Task {
     private Date submissionDate;
 
     @Column(name="name")
+    @NotNull(message = "Name cannot be null")
     private String name;
 
     @Column(name="description")
