@@ -4,9 +4,15 @@ import com.example.business.controller.assembler.TeamModelAssembler;
 import com.example.business.exception.TeamNotFoundException;
 import com.example.business.model.Team;
 import com.example.business.repository.TeamRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,16 +24,19 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
+@RequestMapping("/teams")
 public class TeamController {
     private final TeamRepository teamRepository;
     private  final TeamModelAssembler teamModelAssembler;
+    private final ObjectMapper objectMapper;
 
-    public TeamController(TeamRepository teamRepository, TeamModelAssembler teamModelAssembler) {
+    public TeamController(TeamRepository teamRepository, TeamModelAssembler teamModelAssembler, ObjectMapper objectMapper) {
         this.teamRepository = teamRepository;
         this.teamModelAssembler = teamModelAssembler;
+        this.objectMapper = objectMapper;
     }
 
-    @GetMapping("/teams")
+    @GetMapping
     public CollectionModel<EntityModel<Team>>all() {
         List<EntityModel<Team>> teams = teamRepository.findAll().stream()
                 .map(teamModelAssembler::toModel)
@@ -35,13 +44,13 @@ public class TeamController {
         return CollectionModel.of(teams, linkTo(methodOn(TeamController.class).all()).withSelfRel());
     }
 
-    @GetMapping("/teams/{id}")
+    @GetMapping("/{id}")
     public EntityModel<Team> one(@PathVariable Integer id) {
         Team team = teamRepository.findById(id).orElseThrow(()->new TeamNotFoundException(id));
         return teamModelAssembler.toModel(team);
     }
 
-    @PostMapping("/teams")
+    @PostMapping
     ResponseEntity<?>newTeam(@RequestBody Team newTeam) {
         EntityModel<Team> entityModel = teamModelAssembler.toModel(teamRepository.save(newTeam));
         return ResponseEntity
@@ -49,7 +58,7 @@ public class TeamController {
                 .body(entityModel);
     }
 
-    @PutMapping("teams/{id}")
+    @PutMapping("/{id}")
     ResponseEntity<?>replaceTeam(@RequestBody Team newTeam, @PathVariable Integer id) {
         Team updatedTeam = teamRepository.findById(id)
                 .map(team -> {
@@ -66,9 +75,29 @@ public class TeamController {
                 .body(entityModel);
     }
 
-    @DeleteMapping("/teams/{id}")
+    @DeleteMapping("/{id}")
     ResponseEntity<?>deleteTeam(@PathVariable Integer id) {
         teamRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    public @PatchMapping(path = "/{id}",consumes = "application/json-patch+json")
+    ResponseEntity<?> updateTeam(@PathVariable Integer id,@RequestBody JsonPatch patch) throws JsonProcessingException {
+        try {
+            Team team = teamRepository.findById(id).orElseThrow(() -> new TeamNotFoundException(id));
+            Team teamPatched = applyPatchToTeam(patch, team);
+            teamRepository.save(teamPatched);
+            EntityModel<Team> entityModel = teamModelAssembler.toModel(teamPatched);
+            return ResponseEntity
+                    .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                    .body(entityModel);
+    } catch (JsonPatchException | JsonProcessingException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
 }
+
+    private Team applyPatchToTeam(JsonPatch patch, Team targetTeam) throws JsonPatchException, JsonProcessingException {
+        JsonNode patched = patch.apply(objectMapper.convertValue(targetTeam, JsonNode.class));
+        return objectMapper.treeToValue(patched, Team.class);
+    }
+    }
