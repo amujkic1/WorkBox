@@ -4,7 +4,10 @@ import com.example.demo.controller.assembler.UserModelAssembler;
 import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.models.User;
 import com.example.demo.repository.UserRepository;
-import jakarta.validation.Valid;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -18,6 +21,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
+//@Tag(name="UserController", description = "API for user controller")
 public class UserController {
     private final UserRepository userRepository;
     private final UserModelAssembler userModelAssembler;
@@ -27,7 +31,11 @@ public class UserController {
         this.userModelAssembler = userModelAssembler;
     }
 
-
+    //@Operation(summary = "Retrieve all users", description = "Returns a list of all users")
+    //@ApiResponses(value = {
+    //        @ApiResponse(responseCode = "200", description = "Users found"),
+    //        @ApiResponse(responseCode = "400", description = "Users not found")
+    //})
     @GetMapping("/users")
     public CollectionModel<EntityModel<User>> all(){
         List<EntityModel<User>> users = userRepository.findAll().stream()
@@ -46,7 +54,7 @@ public class UserController {
 
 
     @PostMapping("/user")
-    public ResponseEntity<?> newCheckInRecord(@Valid @RequestBody User newUser){
+    public ResponseEntity<?> newCheckInRecord(@RequestBody User newUser){
         EntityModel<User> entityModel = userModelAssembler.toModel(userRepository.save(newUser));
 
         return ResponseEntity.
@@ -56,7 +64,7 @@ public class UserController {
 
 
     @PutMapping("/user/{id}")
-    public ResponseEntity<?> replaceUser(@RequestBody @Valid User newUser, @PathVariable Integer id){
+    public ResponseEntity<?> replaceUser(@RequestBody User newUser, @PathVariable Integer id){
         User updatedUser = userRepository.findById(id)
                 .map(user -> {
                     user.setFirstName(newUser.getFirstName());

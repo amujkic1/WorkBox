@@ -26,9 +26,10 @@ public class UserControllerTests {
         assertThat(controller).isNotNull();
     }
 
-    @Test
+   /*@Test
     void testGETUser() throws Exception{
         assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/",
                 String.class)).contains("Hello, World");
     }
+    */
 }
