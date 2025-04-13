@@ -1,9 +1,9 @@
 package com.example.hr.clrunner;
 
-import com.example.hr.model.Record;
 import com.example.hr.model.Request;
-import com.example.hr.repository.RecordRepository;
+import com.example.hr.model.User;
 import com.example.hr.repository.RequestRepository;
+import com.example.hr.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 @Component
-@Order(2)
+@Order(3)
 public class RequestRepositoryCommandLineRunner implements CommandLineRunner {
 
     private static final Logger log = LoggerFactory.getLogger(RequestRepositoryCommandLineRunner.class);
@@ -24,16 +24,43 @@ public class RequestRepositoryCommandLineRunner implements CommandLineRunner {
     private RequestRepository requestRepository;
 
     @Autowired
-    private RecordRepository recordRepository;
+    private UserRepository userRepository;
 
     @Override
     public void run(String... args) throws Exception {
-        List<Record> records = recordRepository.findAll();
+        List<User> users = userRepository.findAll();
 
-        Request request1 = new Request("Leave Request", "Tražim odmor od 10 dana.", new Date(), "Pending", records.get(0));
-        Request request2 = new Request("Salary Increase", "Molim povećanje plate zbog povećanog obima posla.", new Date(), "Approved", records.get(1));
-        Request request3 = new Request("Equipment Request", "Potrebna nova tastatura za rad.", new Date(), "Pending", records.get(2));
-        Request request4 = new Request("Remote Work", "Želim raditi od kuće tri dana sedmično.", new Date(), "Rejected", records.get(0));
+        Request request1 = Request.builder()
+                .type("Leave")
+                .text("Tražim odmor od 10 dana.")
+                .date(new Date())
+                .status("Pending")
+                .user(users.get(0))
+                .build();
+
+        Request request2 = Request.builder()
+                .type("Salary Increase")
+                .text("Molim povećanje plate zbog povećanog obima posla.")
+                .date(new Date())
+                .status("Approved")
+                .user(users.get(1))
+                .build();
+
+        Request request3 = Request.builder()
+                .type("Equipment Request")
+                .text("Potrebna nova tastatura za rad.")
+                .date(new Date())
+                .status("Pending")
+                .user(users.get(2))
+                .build();
+
+        Request request4 = Request.builder()
+                .type("Remote Work")
+                .text("Želim raditi od kuće tri dana sedmično.")
+                .date(new Date())
+                .status("Rejected")
+                .user(users.get(0))
+                .build();
 
         requestRepository.save(request1);
         requestRepository.save(request2);

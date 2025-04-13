@@ -23,10 +23,42 @@ public class RecordRepositoryCommandLineRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Record record1 = new Record(123456789, new Date(), "+38761234567", "Adresa 1", "email1@example.com", new Date(), "Active", new Time(System.currentTimeMillis()));
-        Record record2 = new Record(987654321, new Date(), "+38761234568", "Adresa 2", "email2@example.com", new Date(), "Inactive", new Time(System.currentTimeMillis()));
-        Record record3 = new Record(456789123, new Date(), "+38761234569", "Adresa 3", "email3@example.com", new Date(), "Pending", new Time(System.currentTimeMillis()));
 
+        Date now = new Date();
+        Time currentTime = new Time(System.currentTimeMillis());
+
+        Record record1 = Record.builder()
+                .jmbg(1234567890123L)
+                .birthDate(now)
+                .contactNumber("+38761234567")
+                .address("Adresa 1")
+                .email("email1@example.com")
+                .employmentDate(now)
+                .status("Active")
+                .workingHours(currentTime)
+                .build();
+
+        Record record2 = Record.builder()
+                .jmbg(9876543210123L)
+                .birthDate(now)
+                .contactNumber("+38761234568")
+                .address("Adresa 2")
+                .email("email2@example.com")
+                .employmentDate(now)
+                .status("Inactive")
+                .workingHours(currentTime)
+                .build();
+
+        Record record3 = Record.builder()
+                .jmbg(4567891230123L)
+                .birthDate(now)
+                .contactNumber("+38761234569")
+                .address("Adresa 3")
+                .email("email3@example.com")
+                .employmentDate(now)
+                .status("Pending")
+                .workingHours(currentTime)
+                .build();
         recordRepository.save(record1);
         recordRepository.save(record2);
         recordRepository.save(record3);

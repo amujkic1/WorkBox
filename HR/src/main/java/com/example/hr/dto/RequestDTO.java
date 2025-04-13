@@ -8,25 +8,25 @@ public class RequestDTO {
     private String text;
     private Date date;
     private String status;
-    private Integer recordId;
+    private Integer userId;
 
     public RequestDTO(){}
 
-    public RequestDTO(Integer id, String type, String text, Date date, String status, Integer recordId) {
+    public RequestDTO(Integer id, String type, String text, Date date, String status, Integer userId) {
         this.id = id;
         this.type = type;
         this.text = text;
         this.date = date;
         this.status = status;
-        this.recordId = recordId;
+        this.userId = userId;
     }
 
-    public RequestDTO(String type, String text, Date date, String status, Integer recordId) {
+    public RequestDTO(String type, String text, Date date, String status, Integer userId) {
         this.type = type;
         this.text = text;
         this.date = date;
         this.status = status;
-        this.recordId = recordId;
+        this.userId = userId;
     }
 
     public Integer getId() {
@@ -69,11 +69,11 @@ public class RequestDTO {
         this.status = status;
     }
 
-    public Integer getRecordId() {
-        return recordId;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setRecordId(Integer recordId) {
-        this.recordId = recordId;
+    public void setRecordId(Integer userId) {
+        this.userId = userId;
     }
 }
