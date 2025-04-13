@@ -13,12 +13,14 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 @Component
-@Order(3)
+@Order(2)
 public class UserRepositoryCommandLineRunner implements CommandLineRunner {
 
     private static final Logger log = LoggerFactory.getLogger(UserRepositoryCommandLineRunner.class);
@@ -41,35 +43,100 @@ public class UserRepositoryCommandLineRunner implements CommandLineRunner {
             return;
         }
 
-        User user1 = new User("Emina", "Peljto", "Admin", "Emina", "password1", records.get(0));
-        User user2 = new User("Hasan", "Brčaninović", "Admin", "Hasan", "password2", records.get(1));
-        User user3 = new User("Ajna", "Mujkić", "Admin", "Ajna123", "password3", records.get(2));
+        Date now = new Date();
+        Time currentTime = new Time(System.currentTimeMillis());
 
-        // Prvo spremite korisnike, jer oni nemaju reference na "Opening" još
+        User user1 = User.builder()
+                .firstName("Emina")
+                .lastName("Peljto")
+                .role("Admin")
+                .username("Emina")
+                .password("password1")
+                .jmbg(1234567890123L)
+                .birthDate(now)
+                .contactNumber("+38761234567")
+                .address("Adresa 1")
+                .email("email1@example.com")
+                .employmentDate(now)
+                .status("Active")
+                .workingHours(currentTime)
+                //.record(records.get(0))
+                .build();
+
+        User user2 = User.builder()
+                .firstName("Hasan")
+                .lastName("Brčaninović")
+                .role("Admin")
+                .username("Hasan")
+                .password("password2")
+                .jmbg(9876543210123L)
+                .birthDate(now)
+                .contactNumber("+38761234568")
+                .address("Adresa 2")
+                .email("email2@example.com")
+                .employmentDate(now)
+                .status("Inactive")
+                .workingHours(currentTime)
+                //.record(records.get(1))
+                .build();
+
+        User user3 = User.builder()
+                .firstName("Ajna")
+                .lastName("Mujkić")
+                .role("Admin")
+                .username("Ajna123")
+                .password("password3")
+                .jmbg(4567891230123L)
+                .birthDate(now)
+                .contactNumber("+38761234569")
+                .address("Adresa 3")
+                .email("email3@example.com")
+                .employmentDate(now)
+                .status("Pending")
+                .workingHours(currentTime)
+                //.record(records.get(2))
+                .build();
+
         userRepository.save(user1);
         userRepository.save(user2);
         userRepository.save(user3);
 
-        // Postavite datum za start i end
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DATE, 7); // Postavi endDate u budućnost
+        calendar.add(Calendar.DATE, 7);
         Date futureDate = calendar.getTime();
         Date currentDate = new Date();
 
-        // Spremite Openings entitete
-        Opening opening1 = new Opening("Software Engineer", "Development job", "Bachelor's degree", "Flexible hours", currentDate, futureDate, "Open", user1);
-        Opening opening2 = new Opening("Data Analyst", "Analyze data trends", "Experience with SQL", "Remote work", currentDate, futureDate, "Open", user2);
+        Opening opening1 = Opening.builder()
+                .openingName("Software Engineer")
+                .description("Development job")
+                .conditions("Bachelor's degree")
+                .benefits("Flexible hours")
+                .startDate(currentDate)
+                .endDate(futureDate)
+                .result("Open")
+                .user(user1)
+                .users(new ArrayList<>())
+                .build();
 
-        // Spremite Opening entitete
+        Opening opening2 = Opening.builder()
+                .openingName("Data Analyst")
+                .description("Analyze data trends")
+                .conditions("Experience with SQL")
+                .benefits("Remote work")
+                .startDate(currentDate)
+                .endDate(futureDate)
+                .result("Open")
+                .user(user2)
+                .users(new ArrayList<>())
+                .build();
+
         openingRepository.save(opening1);
         openingRepository.save(opening2);
 
-        // Povežite korisnike sa Openings
         user1.addOpening(opening1);
         user1.addOpening(opening2);
         user2.addOpening(opening1);
 
-        // Spremite korisnike ponovo nakon što su povezani sa Opening entitetima
         userRepository.save(user1);
         userRepository.save(user2);
 

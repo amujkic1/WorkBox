@@ -2,12 +2,17 @@ package com.example.hr.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.*;
 import org.hibernate.validator.constraints.URL;
 
 import java.util.Date;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Application {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -46,9 +51,9 @@ public class Application {
     @JoinColumn(name = "opening_id", nullable = false)
     private Opening opening;
 
-    public Application() {}
-
-    public Application(Date date, String firstName, String lastName, String email, String contactNumber, String documentationLink, String status, Double points, Opening opening) {
+    public Application(Date date, String firstName, String lastName, String email,
+                       String contactNumber, String documentationLink, String status,
+                       Double points, Opening opening) {
         this.date = date;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -60,99 +65,4 @@ public class Application {
         this.opening = opening;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id){
-        this.id = id;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getContactNumber() {
-        return contactNumber;
-    }
-
-    public void setContactNumber(String contactNumber) {
-        this.contactNumber = contactNumber;
-    }
-
-    public String getDocumentationLink() {
-        return documentationLink;
-    }
-
-    public void setDocumentationLink(String documentationLink) {
-        this.documentationLink = documentationLink;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Double getPoints() {
-        return points;
-    }
-
-    public void setPoints(Double points) {
-        this.points = points;
-    }
-
-    public Opening getOpening() {
-        return opening;
-    }
-
-    public void setOpening(Opening opening) {
-        this.opening = opening;
-    }
-
-    @Override
-    public String toString() {
-        return "Application{" +
-                "id=" + id +
-                ", date=" + date +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", contactNumber='" + contactNumber + '\'' +
-                ", documentationLink='" + documentationLink + '\'' +
-                ", status='" + status + '\'' +
-                ", points=" + points +
-                ", opening=" + (opening != null ? opening.getId() : "null") +
-                '}';
-    }
 }

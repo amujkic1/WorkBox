@@ -1,4 +1,4 @@
-/*package com.example.hr.assembler;
+package com.example.hr.assembler;
 
 import com.example.hr.controller.ApplicationController;
 import com.example.hr.dto.ApplicationDTO;
@@ -21,4 +21,4 @@ public class UserModelAssembler implements RepresentationModelAssembler<UserDTO,
                 linkTo(methodOn(ApplicationController.class).one(user.getId())).withSelfRel(),
                 linkTo(methodOn(ApplicationController.class).all()).withRel("applications"));
     }
-}*/
+}

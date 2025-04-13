@@ -1,18 +1,24 @@
 package com.example.hr.model;
 
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
+import lombok.*;
+import org.hibernate.annotations.Cascade;
 
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "users")
 @NamedQuery(query = "select u from User u", name = "query_find_all_users")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -36,9 +42,39 @@ public class User {
     @Size(min = 8, message = "Password must be at least 8 characters long")
     private String password;
 
-    @OneToOne
-    @JoinColumn(name = "jmbg", referencedColumnName = "JMBG", unique = true)
-    private Record record;
+//    @OneToOne
+//    @JoinColumn(name = "jmbg", referencedColumnName = "JMBG", unique = true)
+//    private Record record;
+
+    @Column(unique = true)
+    @NotNull(message = "JMBG cannot be null")
+    private Long jmbg;
+
+
+    @NotNull(message = "Birth date cannot be null")
+    @Past(message = "Birth date must be in the past")
+    private Date birthDate;
+
+    @NotBlank(message = "Contact number cannot be blank")
+    @Pattern(regexp = "^\\+?[0-9]*$", message = "Contact number must be a valid number")
+    private String contactNumber;
+
+    @NotBlank(message = "Address cannot be blank")
+    private String address;
+
+    @NotBlank(message = "Email cannot be blank")
+    @Email(message = "Email must be valid")
+    private String email;
+
+    @NotNull(message = "Employment date cannot be null")
+    @PastOrPresent(message = "Employment date must be in the past or present")
+    private Date employmentDate;
+
+    @NotBlank(message = "Status cannot be blank")
+    private String status;
+
+    @NotNull(message = "Working hours cannot be null")
+    private Time workingHours;
 
     @ManyToMany
     @JoinTable(
@@ -46,31 +82,10 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "opening_id")
     )
+    @Builder.Default
     private List<Opening> openings = new ArrayList<>();
 
-    public User() { }
-
-    public User(String firstName, String lastName, String role, String username, String password, Record record) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.role = role;
-        this.username = username;
-        this.password = password;
-        this.record = record;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public List<Opening> getOpenings() {
-        return openings;
-    }
-
-    public void setOpenings(List<Opening> openings) {
-        this.openings = openings;
-    }
-
+    // Pomoćne metode za održavanje veza u @ManyToMany relaciji
     public void addOpening(Opening opening) {
         this.openings.add(opening);
         opening.getUsers().add(this);
