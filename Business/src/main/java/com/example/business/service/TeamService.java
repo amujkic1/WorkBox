@@ -14,20 +14,20 @@ public class TeamService {
     @Autowired
     private TeamRepository teamRepository;
 
-    public Team saveTim(Team team) {
+    public Team saveTeam(Team team) {
         return teamRepository.save(team);
     }
 
-    public List<Team> getAllTimovi() {
+    public List<Team> getAllTeams() {
         return teamRepository.findAll();
     }
 
-    public Optional<Team> getTimById(Integer id) {
+    public Optional<Team> getTeamById(Integer id) {
         return teamRepository.findById(id);
     }
 
 
-    public void deleteTim(Integer id) {
+    public void deleteTeam(Integer id) {
         teamRepository.deleteById(id);
     }
 }

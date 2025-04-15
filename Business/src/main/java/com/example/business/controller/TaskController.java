@@ -8,6 +8,10 @@ import com.example.business.model.User;
 import com.example.business.repository.ProjectRepository;
 import com.example.business.repository.TaskRepository;
 import com.example.business.repository.UserRepository;
+import com.example.business.service.ProjectService;
+import com.example.business.service.TaskService;
+import com.example.business.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -22,37 +26,38 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
+@RequestMapping("/tasks")
 public class TaskController {
-    private final TaskRepository taskRepository;
+    private final TaskService taskService;
     private final TaskModelAssembler taskModelAssembler;
-    private final ProjectRepository projectRepository;
-    private final UserRepository userRepository;
+    private final ProjectService projectService;
+    private final UserService userService;
 
-    public TaskController(TaskRepository taskRepository, TaskModelAssembler taskModelAssembler, ProjectRepository projectRepository, UserRepository userRepository) {
-        this.taskRepository = taskRepository;
+    public TaskController(TaskService taskService, TaskModelAssembler taskModelAssembler, ProjectService projectService, UserService userService) {
+        this.taskService = taskService;
         this.taskModelAssembler = taskModelAssembler;
-        this.projectRepository = projectRepository;
-        this.userRepository = userRepository;
+        this.projectService = projectService;
+        this.userService = userService;
     }
 
-    @GetMapping("/tasks")
+    @GetMapping
     public CollectionModel<EntityModel<Task>> all() {
-        List<EntityModel<Task>> tasks = taskRepository.findAll().stream()
+        List<EntityModel<Task>> tasks = taskService.getAllTasks().stream()
                 .map(taskModelAssembler::toModel)
                 .collect(Collectors.toList());
         return CollectionModel.of(tasks, linkTo(methodOn(TeamController.class).all()).withSelfRel());
     }
 
-    @GetMapping("/tasks/{id}")
+    @GetMapping("/{id}")
     public EntityModel<Task> one(@PathVariable Integer id) {
-        Task task = taskRepository.findById(id).orElseThrow(()->new TaskNotFoundException(id));
+        Task task = taskService.getTaskById(id).orElseThrow(()->new TaskNotFoundException(id));
         return taskModelAssembler.toModel(task);
     }
 
-    @PostMapping("/tasks")
-    ResponseEntity<?>newTask(@RequestBody Task newTask) {
-        Optional<Project> projectOpt = projectRepository.findById(newTask.getProject().getId());
-        Optional<User> userOpt = userRepository.findById(newTask.getUser().getId());
+    @PostMapping
+    ResponseEntity<?>newTask(@RequestBody @Valid Task newTask) {
+        Optional<Project> projectOpt = projectService.getProjectById(newTask.getProject().getId());
+        Optional<User> userOpt = userService.getUserById(newTask.getUser().getId());
 
         if (projectOpt.isEmpty() || userOpt.isEmpty()) {
             return ResponseEntity.badRequest().body("Invalid project or user ID");
@@ -60,18 +65,18 @@ public class TaskController {
 
         newTask.setProject(projectOpt.get());
         newTask.setUser(userOpt.get());
-        EntityModel<Task> entityModel = taskModelAssembler.toModel(taskRepository.save(newTask));
+        EntityModel<Task> entityModel = taskModelAssembler.toModel(taskService.saveTask(newTask));
         return ResponseEntity
                 .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(entityModel);
     }
 
-    @PutMapping("tasks/{id}")
-    ResponseEntity<?>replaceTask(@RequestBody Task newTask, @PathVariable Integer id) {
-        Task updatedTask = taskRepository.findById(id)
+    @PutMapping("/{id}")
+    ResponseEntity<?>replaceTask(@RequestBody @Valid Task newTask, @PathVariable Integer id) {
+        Task updatedTask = taskService.getTaskById(id)
                 .map(task -> {
-                    Optional<Project> projectOpt = projectRepository.findById(newTask.getProject().getId());
-                    Optional<User> userOpt = userRepository.findById(newTask.getUser().getId());
+                    Optional<Project> projectOpt = projectService.getProjectById(newTask.getProject().getId());
+                    Optional<User> userOpt = userService.getUserById(newTask.getUser().getId());
 
                     task.setName(newTask.getName());
                     task.setDescription(newTask.getDescription());
@@ -85,10 +90,10 @@ public class TaskController {
                     if(projectOpt.isPresent())
                     task.setProject(projectOpt.get());
                     else return null;
-                    return taskRepository.save(task);
+                    return taskService.saveTask(task);
                 })
                 .orElseGet(()->{
-                    return taskRepository.save(newTask);
+                    return taskService.saveTask(newTask);
                 });
         EntityModel<Task> entityModel = taskModelAssembler.toModel(updatedTask);
         return ResponseEntity
@@ -96,9 +101,9 @@ public class TaskController {
                 .body(entityModel);
     }
 
-    @DeleteMapping("/tasks/{id}")
+    @DeleteMapping("/{id}")
     ResponseEntity<?> deleteTask(@PathVariable Integer id) {
-        taskRepository.deleteById(id);
+        taskService.deleteTask(id);
         return ResponseEntity.noContent().build();
     }
 
