@@ -3,7 +3,7 @@ package com.example.business.controller;
 import com.example.business.controller.assembler.UserModelAssembler;
 import com.example.business.exception.UserNotFoundException;
 import com.example.business.model.User;
-import com.example.business.repository.UserRepository;
+import com.example.business.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -18,41 +18,42 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
+@RequestMapping("/users")
 public class UserController {
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final UserModelAssembler userModelAssembler;
 
-    public UserController(UserRepository userRepository, UserModelAssembler userModelAssembler) {
-        this.userRepository = userRepository;
+    public UserController(UserService userService, UserModelAssembler userModelAssembler) {
+        this.userService = userService;
         this.userModelAssembler = userModelAssembler;
     }
 
-    @GetMapping("/users")
+    @GetMapping
     public CollectionModel<EntityModel<User>>all() {
-        List<EntityModel<User>> users = userRepository.findAll().stream()
+        List<EntityModel<User>> users = userService.getAllUsers().stream()
                 .map(userModelAssembler::toModel)
                 .collect(Collectors.toList());
         return CollectionModel.of(users, linkTo(methodOn(TeamController.class).all()).withSelfRel());
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("/{id}")
     public EntityModel<User> one(@PathVariable Integer id) {
-        User user = userRepository.findById(id).orElseThrow(()->new UserNotFoundException(id));
+        User user = userService.getUserById(id).orElseThrow(()->new UserNotFoundException(id));
         return userModelAssembler.toModel(user);
     }
 
-    @PutMapping("users/{id}")
+    @PutMapping("/{id}")
     ResponseEntity<?>replaceUser(@RequestBody @Valid User newUser, @PathVariable Integer id) {
-        User updatedUser = userRepository.findById(id)
+        User updatedUser = userService.getUserById(id)
                 .map(user -> {
                     user.setFirstName(newUser.getFirstName());
                     user.setLastName(newUser.getLastName());
                     user.setTeam(newUser.getTeam());
                     user.setUuid();
-                    return userRepository.save(user);
+                    return userService.saveUser(user);
                 })
                 .orElseGet(()->{
-                    return userRepository.save(newUser);
+                    return userService.saveUser(newUser);
                 });
         EntityModel<User> entityModel = userModelAssembler.toModel(updatedUser);
         return ResponseEntity
@@ -60,9 +61,9 @@ public class UserController {
                 .body(entityModel);
     }
 
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("/{id}")
     ResponseEntity<?>deleteUser(@PathVariable Integer id) {
-        userRepository.deleteById(id);
+        userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
 }
