@@ -4,8 +4,8 @@ import com.example.business.controller.assembler.ProjectModelAssembler;
 import com.example.business.exception.ProjectNotFoundException;
 import com.example.business.model.Project;
 import com.example.business.model.Team;
-import com.example.business.repository.ProjectRepository;
-import com.example.business.repository.TeamRepository;
+import com.example.business.service.ProjectService;
+import com.example.business.service.TeamService;
 import jakarta.validation.Valid;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -21,35 +21,36 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
+@RequestMapping("/projects")
 public class ProjectController {
-    private final ProjectRepository projectRepository;
+    private final ProjectService projectService;
     private final ProjectModelAssembler projectModelAssembler;
-    private final TeamRepository teamRepository;
+    private final TeamService teamService;
 
-    public ProjectController(ProjectRepository projectRepository, ProjectModelAssembler projectModelAssembler, TeamRepository teamRepository) {
-        this.projectRepository = projectRepository;
+    public ProjectController(ProjectService projectService, ProjectModelAssembler projectModelAssembler, TeamService teamService) {
+        this.projectService = projectService;
         this.projectModelAssembler = projectModelAssembler;
-        this.teamRepository = teamRepository;
+        this.teamService = teamService;
     }
 
-    @GetMapping("/projects")
+    @GetMapping
     public CollectionModel<EntityModel<Project>> all() {
-        List<EntityModel<Project>> projects = projectRepository.findAll().stream()
+        List<EntityModel<Project>> projects = projectService.getAllProjects().stream()
                 .map(projectModelAssembler::toModel)
                 .collect(Collectors.toList());
         return CollectionModel.of(projects, linkTo(methodOn(TeamController.class).all()).withSelfRel());
     }
 
-    @GetMapping("/projects/{id}")
+    @GetMapping("/{id}")
     public EntityModel<Project> one(@PathVariable Integer id) {
-        Project project = projectRepository.findById(id).orElseThrow(()->new ProjectNotFoundException(id));
+        Project project = projectService.getProjectById(id).orElseThrow(()->new ProjectNotFoundException(id));
         return projectModelAssembler.toModel(project);
     }
 
-    @PostMapping("/projects")
+    @PostMapping
     ResponseEntity<?> newProject(@RequestBody @Valid Project newProject) {
         if (newProject.getTeam() != null && newProject.getTeam().getId() != null) {
-            Optional<Team> existingTeam = teamRepository.findById(newProject.getTeam().getId());
+            Optional<Team> existingTeam = teamService.getTeamById(newProject.getTeam().getId());
             if (existingTeam.isPresent()) {
                 newProject.setTeam(existingTeam.get());
             } else {
@@ -58,15 +59,15 @@ public class ProjectController {
         } else {
             return ResponseEntity.badRequest().body("Team ID is required.");
         }
-        EntityModel<Project> entityModel = projectModelAssembler.toModel(projectRepository.save(newProject));
+        EntityModel<Project> entityModel = projectModelAssembler.toModel(projectService.saveProject(newProject));
         return ResponseEntity
                 .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(entityModel);
     }
 
-    @PutMapping("projects/{id}")
+    @PutMapping("/{id}")
     ResponseEntity<?>replaceProject(@RequestBody @Valid Project newProject, @PathVariable Integer id) {
-        Project updatedProject = projectRepository.findById(id)
+        Project updatedProject = projectService.getProjectById(id)
                 .map(project -> {
                     project.setTitle(newProject.getTitle());
                     project.setProjectManager(newProject.getProjectManager());
@@ -76,25 +77,25 @@ public class ProjectController {
                     project.setStartDate(newProject.getStartDate());
                     project.setEndDate(newProject.getEndDate());
                     if (newProject.getTeam() != null && newProject.getTeam().getId() != null) {
-                        Optional<Team> existingTeam = teamRepository.findById(newProject.getTeam().getId());
+                        Optional<Team> existingTeam = teamService.getTeamById(newProject.getTeam().getId());
                         if (existingTeam.isPresent()) {
                             project.setTeam(existingTeam.get());
                         } else {
                             return null;
                         }
                     }
-                    return projectRepository.save(project);
+                    return projectService.saveProject(project);
                 })
                 .orElseGet(()->{
                     if (newProject.getTeam() != null && newProject.getTeam().getId() != null) {
-                        Optional<Team> existingTeam = teamRepository.findById(newProject.getTeam().getId());
+                        Optional<Team> existingTeam = teamService.getTeamById(newProject.getTeam().getId());
                         if (existingTeam.isPresent()) {
                             newProject.setTeam(existingTeam.get());
                         } else {
                             return null;
                         }
                     }
-                    return projectRepository.save(newProject);
+                    return projectService.saveProject(newProject);
                 });
 
         if (updatedProject == null) {
@@ -107,9 +108,9 @@ public class ProjectController {
                 .body(entityModel);
     }
 
-    @DeleteMapping("/projects/{id}")
+    @DeleteMapping("/{id}")
     ResponseEntity<?>deleteProject(@PathVariable Integer id) {
-        projectRepository.deleteById(id);
+        projectService.deleteProject(id);
         return ResponseEntity.noContent().build();
     }
 }
