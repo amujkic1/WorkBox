@@ -6,6 +6,7 @@ import com.example.business.model.Project;
 import com.example.business.model.Team;
 import com.example.business.repository.ProjectRepository;
 import com.example.business.repository.TeamRepository;
+import jakarta.validation.Valid;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -46,7 +47,7 @@ public class ProjectController {
     }
 
     @PostMapping("/projects")
-    ResponseEntity<?> newProject(@RequestBody Project newProject) {
+    ResponseEntity<?> newProject(@RequestBody @Valid Project newProject) {
         if (newProject.getTeam() != null && newProject.getTeam().getId() != null) {
             Optional<Team> existingTeam = teamRepository.findById(newProject.getTeam().getId());
             if (existingTeam.isPresent()) {
@@ -64,7 +65,7 @@ public class ProjectController {
     }
 
     @PutMapping("projects/{id}")
-    ResponseEntity<?>replaceProject(@RequestBody Project newProject, @PathVariable Integer id) {
+    ResponseEntity<?>replaceProject(@RequestBody @Valid Project newProject, @PathVariable Integer id) {
         Project updatedProject = projectRepository.findById(id)
                 .map(project -> {
                     project.setTitle(newProject.getTitle());

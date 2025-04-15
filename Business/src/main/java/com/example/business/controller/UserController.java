@@ -4,6 +4,7 @@ import com.example.business.controller.assembler.UserModelAssembler;
 import com.example.business.exception.UserNotFoundException;
 import com.example.business.model.User;
 import com.example.business.repository.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -41,7 +42,7 @@ public class UserController {
     }
 
     @PutMapping("users/{id}")
-    ResponseEntity<?>replaceUser(@RequestBody User newUser, @PathVariable Integer id) {
+    ResponseEntity<?>replaceUser(@RequestBody @Valid User newUser, @PathVariable Integer id) {
         User updatedUser = userRepository.findById(id)
                 .map(user -> {
                     user.setFirstName(newUser.getFirstName());

@@ -8,6 +8,7 @@ import com.example.business.model.User;
 import com.example.business.repository.ProjectRepository;
 import com.example.business.repository.TaskRepository;
 import com.example.business.repository.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -50,7 +51,7 @@ public class TaskController {
     }
 
     @PostMapping("/tasks")
-    ResponseEntity<?>newTask(@RequestBody Task newTask) {
+    ResponseEntity<?>newTask(@RequestBody @Valid Task newTask) {
         Optional<Project> projectOpt = projectRepository.findById(newTask.getProject().getId());
         Optional<User> userOpt = userRepository.findById(newTask.getUser().getId());
 
@@ -67,7 +68,7 @@ public class TaskController {
     }
 
     @PutMapping("tasks/{id}")
-    ResponseEntity<?>replaceTask(@RequestBody Task newTask, @PathVariable Integer id) {
+    ResponseEntity<?>replaceTask(@RequestBody @Valid Task newTask, @PathVariable Integer id) {
         Task updatedTask = taskRepository.findById(id)
                 .map(task -> {
                     Optional<Project> projectOpt = projectRepository.findById(newTask.getProject().getId());

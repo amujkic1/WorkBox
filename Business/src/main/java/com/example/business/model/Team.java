@@ -3,7 +3,6 @@ package com.example.business.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
-import java.util.Set;
 
 @Entity
 @Table(name = "Team")
