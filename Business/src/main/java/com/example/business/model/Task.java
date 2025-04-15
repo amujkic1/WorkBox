@@ -1,6 +1,8 @@
 package com.example.business.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.util.Date;
 
@@ -23,21 +25,25 @@ public class Task {
     @Temporal(TemporalType.DATE)
     private Date submissionDate;
 
+    @NotNull(message = "Task name cannot be null")
     @Column(name="name")
     private String name;
 
+    @Size(max = 255,message = "Task description must be less than 255 characters")
     @Column(name="description")
     private String description;
 
+    @NotNull(message = "Task status cannot be null")
     @Column(name="status")
     private String status;
 
+    @NotNull(message = "Project cannot be null")
     @ManyToOne
     @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     public Task() { }

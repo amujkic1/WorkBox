@@ -1,6 +1,7 @@
 package com.example.business.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Set;
 
@@ -11,9 +12,11 @@ public class Team {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotNull(message = "Team name cannot be null")
     @Column(name="name")
     private String name;
 
+    @NotNull(message = "Team leader cannot be null")
     @Column(name="team_leader")
     private String teamLeader;
 
