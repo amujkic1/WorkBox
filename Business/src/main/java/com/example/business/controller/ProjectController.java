@@ -6,10 +6,16 @@ import com.example.business.model.Project;
 import com.example.business.model.Team;
 import com.example.business.service.ProjectService;
 import com.example.business.service.TeamService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import jakarta.validation.Valid;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,11 +32,13 @@ public class ProjectController {
     private final ProjectService projectService;
     private final ProjectModelAssembler projectModelAssembler;
     private final TeamService teamService;
+    private final ObjectMapper objectMapper;
 
-    public ProjectController(ProjectService projectService, ProjectModelAssembler projectModelAssembler, TeamService teamService) {
+    public ProjectController(ProjectService projectService, ProjectModelAssembler projectModelAssembler, TeamService teamService, ObjectMapper objectMapper) {
         this.projectService = projectService;
         this.projectModelAssembler = projectModelAssembler;
         this.teamService = teamService;
+        this.objectMapper = objectMapper;
     }
 
     @GetMapping
@@ -112,5 +120,28 @@ public class ProjectController {
     ResponseEntity<?>deleteProject(@PathVariable Integer id) {
         projectService.deleteProject(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping(path = "/{id}", consumes = "application/json-patch+json")
+    public ResponseEntity<?> updateProject(@PathVariable Integer id, @RequestBody JsonPatch patch) {
+        try {
+            Project project = projectService.getProjectById(id).orElseThrow(()->new ProjectNotFoundException(id));
+            Project projectPatched = applyPatchToProject(patch, project);
+            projectService.saveProject(projectPatched);
+            EntityModel<Project> entityModel = projectModelAssembler.toModel(projectPatched);
+            return ResponseEntity
+                    .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                    .body(entityModel);
+        } catch (JsonPatchException | JsonProcessingException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        } catch (ProjectNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    private Project applyPatchToProject(
+            JsonPatch patch, Project targetProject) throws JsonPatchException, JsonProcessingException {
+        JsonNode patched = patch.apply(objectMapper.convertValue(targetProject, JsonNode.class));
+        return objectMapper.treeToValue(patched, Project.class);
     }
 }
