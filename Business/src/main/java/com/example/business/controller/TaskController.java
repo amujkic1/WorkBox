@@ -107,5 +107,20 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<?> getTasksByUser(@PathVariable Integer userId) {
+        List<Task> tasks = taskService.getTasksByUserId(userId);
+
+        if (tasks.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        List<EntityModel<Task>> taskModels = tasks.stream()
+                .map(taskModelAssembler::toModel)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(CollectionModel.of(taskModels,
+                linkTo(methodOn(TaskController.class).getTasksByUser(userId)).withSelfRel()));
+    }
 
 }
