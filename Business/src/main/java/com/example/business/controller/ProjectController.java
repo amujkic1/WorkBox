@@ -46,7 +46,7 @@ public class ProjectController {
         List<EntityModel<Project>> projects = projectService.getAllProjects().stream()
                 .map(projectModelAssembler::toModel)
                 .collect(Collectors.toList());
-        return CollectionModel.of(projects, linkTo(methodOn(TeamController.class).all()).withSelfRel());
+        return CollectionModel.of(projects, linkTo(methodOn(ProjectController.class).all()).withSelfRel());
     }
 
     @GetMapping("/{id}")

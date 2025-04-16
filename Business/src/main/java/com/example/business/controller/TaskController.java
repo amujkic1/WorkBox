@@ -5,9 +5,6 @@ import com.example.business.exception.TaskNotFoundException;
 import com.example.business.model.Project;
 import com.example.business.model.Task;
 import com.example.business.model.User;
-import com.example.business.repository.ProjectRepository;
-import com.example.business.repository.TaskRepository;
-import com.example.business.repository.UserRepository;
 import com.example.business.service.ProjectService;
 import com.example.business.service.TaskService;
 import com.example.business.service.UserService;
@@ -45,7 +42,7 @@ public class TaskController {
         List<EntityModel<Task>> tasks = taskService.getAllTasks().stream()
                 .map(taskModelAssembler::toModel)
                 .collect(Collectors.toList());
-        return CollectionModel.of(tasks, linkTo(methodOn(TeamController.class).all()).withSelfRel());
+        return CollectionModel.of(tasks, linkTo(methodOn(TaskController.class).all()).withSelfRel());
     }
 
     @GetMapping("/{id}")
@@ -123,4 +120,12 @@ public class TaskController {
                 linkTo(methodOn(TaskController.class).getTasksByUser(userId)).withSelfRel()));
     }
 
+    @PostMapping("/addtasks/{projectId}")
+    public CollectionModel<EntityModel<Task>> addTasksToProject(@PathVariable Integer projectId, @RequestBody List<Task> tasks) {
+            List<Task> addedTasks = taskService.addTasksToProject(projectId, tasks);
+            List<EntityModel<Task>> newTasks = addedTasks.stream()
+                    .map(taskModelAssembler::toModel)
+                    .collect(Collectors.toList());
+            return CollectionModel.of(newTasks, linkTo(methodOn(TaskController.class).all()).withSelfRel());
+    }
 }

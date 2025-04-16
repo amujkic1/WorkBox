@@ -33,7 +33,7 @@ public class UserController {
         List<EntityModel<User>> users = userService.getAllUsers().stream()
                 .map(userModelAssembler::toModel)
                 .collect(Collectors.toList());
-        return CollectionModel.of(users, linkTo(methodOn(TeamController.class).all()).withSelfRel());
+        return CollectionModel.of(users, linkTo(methodOn(UserController.class).all()).withSelfRel());
     }
 
     @GetMapping("/{id}")
