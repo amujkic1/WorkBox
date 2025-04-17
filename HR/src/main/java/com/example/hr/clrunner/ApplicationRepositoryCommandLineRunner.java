@@ -35,7 +35,7 @@ public class ApplicationRepositoryCommandLineRunner implements CommandLineRunner
 
         List<Opening> openings = openingRepository.findAll();
 
-        Opening opening = openings.getFirst();
+        Opening opening = openings.get(0);
 
         Application app1 = new Application(new Date(), "Mujo", "Mujić", "mujo.mujic@gmail.com", "+061123456", "https://docs.com/cv1", "Pending", 85.0, opening);
         Application app2 = new Application(new Date(), "Haso", "Hasić", "haso.hasic@gmail.com", "+062456789", "https://docs.com/cv2", "Accepted", 92.5, opening);
