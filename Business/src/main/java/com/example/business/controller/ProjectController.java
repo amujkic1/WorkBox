@@ -84,6 +84,7 @@ public class ProjectController {
                     project.setTakeoverDate(newProject.getTakeoverDate());
                     project.setStartDate(newProject.getStartDate());
                     project.setEndDate(newProject.getEndDate());
+                    project.setStatus(newProject.getStatus());
                     if (newProject.getTeam() != null && newProject.getTeam().getId() != null) {
                         Optional<Team> existingTeam = teamService.getTeamById(newProject.getTeam().getId());
                         if (existingTeam.isPresent()) {
