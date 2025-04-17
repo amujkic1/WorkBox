@@ -7,11 +7,10 @@ public class ProjectReportDTO {
     private String status;
 
     public ProjectReportDTO() {}
-    public ProjectReportDTO(String title, Date endDate) {
+    public ProjectReportDTO(String title, String status) {
         this.title = title;
         this.status = status;
     }
-
 
     public String getTitle() {
         return title;
