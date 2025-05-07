@@ -1,6 +1,9 @@
 package com.example.demo.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import java.util.UUID;
 
 @Entity
@@ -10,11 +13,16 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer userId;
 
+    @Size(min = 2, max = 50, message = "Name must have between 2 i 50 characters")
     @Column(name="first_name")
     private String firstName;
 
+    @Size(min = 2, max = 50, message = "Last name must have between 2 i 50 characters")
     @Column(name="last_name")
     private String lastName;
+
+    @NotNull(message = "Salary coefficient cannot be null)")
+    private Double salaryCoefficient = 0.0;
 
     @Column(name="user_UUID")
     private UUID userUUID;
@@ -22,10 +30,11 @@ public class User {
 
     public User() {}
 
-    public User(String firstName, String lastName) {
+    public User(String firstName, String lastName, Double salaryCoefficient) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.userUUID = UUID.randomUUID();
+        this.salaryCoefficient = salaryCoefficient;
+        this.userUUID = UUID.randomUUID(); //Kroz Postman upit se automatski ne generise
     }
 
     public Integer getUserId() {
@@ -50,6 +59,14 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public Double getSalaryCoefficient() {
+        return salaryCoefficient;
+    }
+
+    public void setSalaryCoefficient(Double salaryCoefficient) {
+        this.salaryCoefficient = salaryCoefficient;
     }
 
     public UUID getUserUUID() {
