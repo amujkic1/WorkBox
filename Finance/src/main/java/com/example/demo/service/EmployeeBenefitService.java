@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.models.EmployeeBenefit;
 import com.example.demo.repository.EmployeeBenefitRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,12 @@ public class EmployeeBenefitService {
 
     public void insert(EmployeeBenefit employeeBenefit){
         employeeBenefitRepository.save(employeeBenefit);
+    }
+
+    @Transactional
+    public List<EmployeeBenefit> insertEmployeeBenefits(List<EmployeeBenefit> employeeBenefits) {
+        employeeBenefitRepository.saveAll(employeeBenefits);
+        return employeeBenefits;
     }
 
 }

@@ -1,6 +1,7 @@
 package com.example.demo.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "employee_benefit")
@@ -8,11 +9,15 @@ public class EmployeeBenefit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer EmployeeBenefitId;
+
+    @NotNull(message = "EmployeeBenefit type cannot be null)")
     private String type;
+
+    @NotNull(message = "EmployeeBenefit status cannot be null)")
     private String status;
+
     private String details;
-    //@Column(name = "salary_coefficient")
-    private Double salaryCoefficient;
+
 
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
@@ -21,11 +26,10 @@ public class EmployeeBenefit {
     public EmployeeBenefit() {
     }
 
-    public EmployeeBenefit(String type, String status, String details, Double salaryCoefficient, User user) {
+    public EmployeeBenefit(String type, String status, String details, User user) {
         this.type = type;
         this.status = status;
         this.details = details;
-        this.salaryCoefficient = salaryCoefficient;
         this.user = user;
     }
 
@@ -61,14 +65,6 @@ public class EmployeeBenefit {
         this.details = details;
     }
 
-    public Double getSalaryCoefficient() {
-        return salaryCoefficient;
-    }
-
-    public void setSalaryCoefficient(Double salaryCoefficient) {
-        this.salaryCoefficient = salaryCoefficient;
-    }
-
     public User getUser() {
         return user;
     }
@@ -76,4 +72,5 @@ public class EmployeeBenefit {
     public void setUser(User user) {
         this.user = user;
     }
+
 }

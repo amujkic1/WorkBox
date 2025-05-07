@@ -20,7 +20,7 @@ public class UserCommandLineRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
 
-        User user = new User("Test ime","Test prezime");
+        User user = new User("Test ime","Test prezime",1.5);
         userRepository.save(user);
 
     }
