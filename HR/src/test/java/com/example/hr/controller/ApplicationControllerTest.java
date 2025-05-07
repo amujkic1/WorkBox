@@ -14,11 +14,14 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -57,8 +60,46 @@ public class ApplicationControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
+    void testGetAllApplications() throws Exception {
+        Application application1 = new Application(new Date(), "John", "Doe", "john.doe@example.com", "123456789", "http://example.com", "Pending", 90.0, null);
+        Application application2 = new Application(new Date(), "Jane", "Smith", "jane.smith@example.com", "987654321", "http://example.com", "Approved", 85.0, null);
+
+        List<Application> applications = Arrays.asList(application1, application2);
+
+        ApplicationDTO applicationDTO1 = new ApplicationDTO(new Date(), "John", "Doe", "john.doe@example.com", "123456789", "http://example.com", "Pending", 90.0, 1);
+        ApplicationDTO applicationDTO2 = new ApplicationDTO(new Date(), "Jane", "Smith", "jane.smith@example.com", "987654321", "http://example.com", "Approved", 85.0, 1);
+
+        when(modelMapper.map(application1, ApplicationDTO.class)).thenReturn(applicationDTO1);
+        when(modelMapper.map(application2, ApplicationDTO.class)).thenReturn(applicationDTO2);
+
+        when(applicationModelAssembler.toModel(applicationDTO1)).thenReturn(EntityModel.of(applicationDTO1));
+        when(applicationModelAssembler.toModel(applicationDTO2)).thenReturn(EntityModel.of(applicationDTO2));
+
+        when(applicationRepository.findAll()).thenReturn(applications);
+
+        mockMvc.perform(get("/applications"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/hal+json"))
+                .andExpect(jsonPath("$._links.self.href").exists())
+                .andExpect(jsonPath("$._embedded.applicationDTOList[0].firstName").value("John"))
+                .andExpect(jsonPath("$._embedded.applicationDTOList[1].firstName").value("Jane"));
+    }
+
+    @Test
+    void testGetApplicationByID() throws Exception{
+        Application application = new Application(new Date(), "John", "Doe", "john.doe@example.com", "123456789", "http://example.com", "Pending", 90.0, null);
+        ApplicationDTO applicationDTO = new ApplicationDTO(new Date(), "John", "Doe", "john.doe@example.com", "123456789", "http://example.com", "Pending", 90.0, 1);
+
+        when(applicationRepository.findById(1)).thenReturn(Optional.of(application));
+        when(applicationModelAssembler.toModel(applicationDTO)).thenReturn(EntityModel.of(applicationDTO));
+
+
+
+    }
+
+
+    @Test
     void testPostApplication_invalidEmail_returns400ValidationError() throws Exception {
-        // Moramo mockati opening zbog validacije
         when(openingRepository.findById(any())).thenReturn(Optional.of(new Opening()));
 
         ApplicationDTO dto = new ApplicationDTO();

@@ -40,4 +40,11 @@ public class ApplicationService {
             entityManager.remove(application);
         }
     }
+
+    public List<Application> findAllOrderByPointsDesc() {
+        TypedQuery<Application> query = entityManager.createQuery(
+                "SELECT a FROM Application a ORDER BY a.points DESC", Application.class);
+        return query.getResultList();
+    }
+
 }

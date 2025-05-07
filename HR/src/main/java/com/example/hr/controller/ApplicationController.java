@@ -195,4 +195,16 @@ public class ApplicationController {
         return objectMapper.treeToValue(patched, ApplicationDTO.class);
     }
 
+    @GetMapping("/applications/sorted")
+    @Operation(summary = "Get applications sorted by points", description = "Returns applications sorted by their points in descending order")
+    public CollectionModel<EntityModel<ApplicationDTO>> getApplicationsSortedByPoints() {
+        List<EntityModel<ApplicationDTO>> applications = applicationService.findAllOrderByPointsDesc().stream()
+                .map(application -> modelMapper.map(application, ApplicationDTO.class))
+                .map(applicationModelAssembler::toModel)
+                .collect(Collectors.toList());
+
+        return CollectionModel.of(applications, linkTo(methodOn(ApplicationController.class).getApplicationsSortedByPoints()).withSelfRel());
+    }
+
+
 }
