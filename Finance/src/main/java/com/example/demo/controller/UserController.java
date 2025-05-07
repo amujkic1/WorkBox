@@ -69,6 +69,7 @@ public class UserController {
                 .map(user -> {
                     user.setFirstName(newUser.getFirstName());
                     user.setLastName(newUser.getLastName());
+                    user.setSalaryCoefficient(newUser.getSalaryCoefficient());
                     user.setUserUUID(newUser.getUserUUID());
                     return userRepository.save(user);
                 })

@@ -6,6 +6,7 @@ import com.example.demo.exception.EmployeeBenefitNotFoundException;
 import com.example.demo.models.CheckInRecord;
 import com.example.demo.models.EmployeeBenefit;
 import com.example.demo.repository.EmployeeBenefitRepository;
+import com.example.demo.service.EmployeeBenefitService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -22,10 +23,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class EmployeeBenefitController {
     private final EmployeeBenefitRepository employeeBenefitRepository;
     private final EmployeeBenefitModelAssembler employeeBenefitModelAssembler;
+    private final EmployeeBenefitService employeeBenefitService;
 
-    public EmployeeBenefitController(EmployeeBenefitRepository employeeBenefitRepository, EmployeeBenefitModelAssembler employeeBenefitModelAssembler) {
+    public EmployeeBenefitController(EmployeeBenefitRepository employeeBenefitRepository, EmployeeBenefitModelAssembler employeeBenefitModelAssembler, EmployeeBenefitService employeeBenefitService) {
         this.employeeBenefitRepository = employeeBenefitRepository;
         this.employeeBenefitModelAssembler = employeeBenefitModelAssembler;
+        this.employeeBenefitService = employeeBenefitService;
     }
 
 
@@ -59,7 +62,6 @@ public class EmployeeBenefitController {
                     employeeBenefit.setType(newEmployeeBenefit.getType());
                     employeeBenefit.setStatus(newEmployeeBenefit.getStatus());
                     employeeBenefit.setDetails(newEmployeeBenefit.getDetails());
-                    employeeBenefit.setSalaryCoefficient(newEmployeeBenefit.getSalaryCoefficient());
                     employeeBenefit.setUser(newEmployeeBenefit.getUser());
 
                     return employeeBenefitRepository.save(employeeBenefit);
@@ -80,6 +82,19 @@ public class EmployeeBenefitController {
         employeeBenefitRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+
+    /*
+    @PostMapping("/employee_benefits")
+    public CollectionModel<EntityModel<EmployeeBenefit>> insertEmployeeBenefits(@RequestBody List<EmployeeBenefit> employeeBenefits) {
+        List<EmployeeBenefit> addedEmployeeBenefits = employeeBenefitService.insertEmployeeBenefits(employeeBenefits);
+        List<EntityModel<EmployeeBenefit>> insertedEmployeeBenefits = addedEmployeeBenefits.stream()
+                .map(employeeBenefitModelAssembler::toModel)
+                .collect(Collectors.toList());
+        return CollectionModel.of(insertedEmployeeBenefits, linkTo(methodOn(EmployeeBenefitController.class).all()).withSelfRel());
+    }
+
+    */
 
 
 }

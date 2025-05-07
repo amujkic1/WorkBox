@@ -9,11 +9,15 @@ public class EmployeeBenefit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer EmployeeBenefitId;
+
+    @NotNull(message = "EmployeeBenefit type cannot be null)")
     private String type;
+
+    @NotNull(message = "EmployeeBenefit status cannot be null)")
     private String status;
+
     private String details;
-    //@Column(name = "salary_coefficient")
-    private Double salaryCoefficient;
+
 
     @ManyToOne
     @JoinColumn(name = "userId", nullable = false)
@@ -22,11 +26,10 @@ public class EmployeeBenefit {
     public EmployeeBenefit() {
     }
 
-    public EmployeeBenefit(String type, String status, String details, Double salaryCoefficient, User user) {
+    public EmployeeBenefit(String type, String status, String details, User user) {
         this.type = type;
         this.status = status;
         this.details = details;
-        this.salaryCoefficient = salaryCoefficient;
         this.user = user;
     }
 
@@ -60,14 +63,6 @@ public class EmployeeBenefit {
 
     public void setDetails(String details) {
         this.details = details;
-    }
-
-    public Double getSalaryCoefficient() {
-        return salaryCoefficient;
-    }
-
-    public void setSalaryCoefficient(Double salaryCoefficient) {
-        this.salaryCoefficient = salaryCoefficient;
     }
 
     public User getUser() {

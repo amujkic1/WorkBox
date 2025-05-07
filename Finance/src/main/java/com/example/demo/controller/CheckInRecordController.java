@@ -5,9 +5,16 @@ import com.example.demo.exception.CheckInRecordNotFoundException;
 import com.example.demo.models.CheckInRecord;
 import com.example.demo.repository.CheckInRecordRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.service.CheckInRecordService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,11 +28,14 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class CheckInRecordController {
     private final CheckInRecordRepository checkInRecordRepository;
     private final CheckInRecordModelAssembler checkInRecordModelAssembler;
+    private final CheckInRecordService checkInRecordService;
     private final UserRepository userRepository;
 
-    public CheckInRecordController(CheckInRecordRepository checkInRecordRepository, CheckInRecordModelAssembler checkInRecordModelAssembler, UserRepository userRepository) {
+
+    public CheckInRecordController(CheckInRecordRepository checkInRecordRepository, CheckInRecordModelAssembler checkInRecordModelAssembler, CheckInRecordService checkInRecordService, UserRepository userRepository) {
         this.checkInRecordRepository = checkInRecordRepository;
         this.checkInRecordModelAssembler = checkInRecordModelAssembler;
+        this.checkInRecordService = checkInRecordService;
         this.userRepository = userRepository;
     }
 
@@ -75,10 +85,41 @@ public class CheckInRecordController {
                 .body(entityModel);
     }
 
+    @PatchMapping(path = "/check_in_record/{id}", consumes = "application/json-patch+json")
+    public ResponseEntity<?> updateCheckOutTime(@PathVariable Integer id, @RequestBody JsonPatch patch) {
+        try {
+            CheckInRecord checkInRecord = checkInRecordRepository.findById(id)
+                    .orElseThrow(() -> new CheckInRecordNotFoundException(id));
+            CheckInRecord checkInRecordPatched = applyPatchToCheckInRecord(patch, checkInRecord);
+
+            CheckInRecord updatedCheckInRecord = checkInRecordService.updateCheckOutTime(checkInRecordPatched);
+            EntityModel<CheckInRecord> entityModel = checkInRecordModelAssembler.toModel(updatedCheckInRecord);
+
+            //return ResponseEntity.ok(entityModel);
+            return ResponseEntity
+                    .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                    .body(entityModel);
+        } catch (JsonPatchException | JsonProcessingException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        } catch (CheckInRecordNotFoundException e) {
+            throw new RuntimeException(e.getMessage()+" Greška prilikom pronalaska sloga u patch metodi.");
+        }
+    }
+
+    private CheckInRecord applyPatchToCheckInRecord(JsonPatch patch, CheckInRecord checkInRecord) throws JsonPatchException, JsonProcessingException{
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode patched = patch.apply(objectMapper.convertValue(checkInRecord, JsonNode.class));
+        return objectMapper.treeToValue(patched, CheckInRecord.class);
+    }
+
+
     @DeleteMapping("/check_in_record/{id}")
     public ResponseEntity<?> deleteCheckInRecord(@PathVariable Integer id){
         checkInRecordRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+
+
 
 }

@@ -1,35 +1,71 @@
 package com.example.demo;
 
 import com.example.demo.controller.UserController;
+import com.example.demo.controller.assembler.UserModelAssembler;
+import com.example.demo.models.User;
+import com.example.demo.repository.UserRepository;
+import com.example.demo.service.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.test.web.server.LocalServerPort;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import java.util.Arrays;
+import java.util.List;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+
+
+@ExtendWith(MockitoExtension.class)
 public class UserControllerTests {
 
-    @Autowired
-    private UserController controller;
+    private MockMvc mockMvc;
 
-    @LocalServerPort
-    private int port;
+    @Mock
+    private UserService userService;
 
-    @Autowired
-    private TestRestTemplate restTemplate;
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private UserModelAssembler userModelAssembler;
+
+    @InjectMocks
+    private UserController userController;
+
+
+
+    private User user;
+
+    @BeforeEach
+    void setUp() {
+        userController = new UserController(userRepository, userModelAssembler);
+        mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
+        user = new User("TestIme", "TestPrezime");
+    }
 
     @Test
-    void contextLoads() throws Exception {
-        assertThat(controller).isNotNull();
-    }
+    void testGetAllFeedbacks() throws Exception {
 
-   /*@Test
-    void testGETUser() throws Exception{
-        assertThat(this.restTemplate.getForObject("http://localhost:" + port + "/",
-                String.class)).contains("Hello, World");
+
+        List<User> usersList = Arrays.asList(user);
+        when(userService.getAllUsers()).thenReturn(usersList);
+
+        mockMvc.perform(get("/users"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].userId").value(user.getUserId()))
+                .andExpect(jsonPath("$.links").exists());
+
+        verify(userService, times(1)).getAllUsers();
     }
-    */
 }
