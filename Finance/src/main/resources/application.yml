@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: finance-service
+  config:
+    import: optional:configserver:http://localhost:8888
+
+  cloud:
+    config:
+      profile: dev
