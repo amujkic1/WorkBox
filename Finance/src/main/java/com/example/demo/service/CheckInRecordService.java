@@ -27,4 +27,14 @@ public class CheckInRecordService {
     }
 
 
+    public CheckInRecord updateCheckOutTime(CheckInRecord updatedRecord) {
+        return checkInRecordRepository.findById(updatedRecord.getCheckInRecordId())
+                .map(existingRecord -> {
+                    existingRecord.setCheckOutTime(updatedRecord.getCheckOutTime());
+                    return checkInRecordRepository.save(existingRecord);
+                })
+                .orElseThrow(() -> new RuntimeException("Check-in record not found with id: " + updatedRecord.getCheckInRecordId()));
+    }
+
+
 }

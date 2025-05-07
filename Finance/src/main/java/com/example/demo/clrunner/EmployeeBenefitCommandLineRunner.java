@@ -22,7 +22,7 @@ public class EmployeeBenefitCommandLineRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         User user = userService.getAllUsers().getFirst();
-        EmployeeBenefit benfit = new EmployeeBenefit("zdravstvo","aktivno","Zdravstveno osiguranje",1.5,user);
+        EmployeeBenefit benfit = new EmployeeBenefit("zdravstvo","aktivno","Zdravstveno osiguranje",user);
         employeeBenefitService.insert(benfit);
         System.out.println("Unesen benefit");
     }

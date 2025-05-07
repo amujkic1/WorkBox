@@ -1,6 +1,8 @@
 package com.example.demo.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+
 import java.sql.Time;
 import java.util.Date;
 
@@ -13,12 +15,15 @@ public class CheckInRecord {
 
     @Column(name = "check_in_date")
     @Temporal(TemporalType.DATE)
+    @NotNull(message = "CheckInDate cannot be null)")
     private Date checkInDate;
 
     @Column(name = "check_in_time")
     @Temporal(TemporalType.TIME)
+    @NotNull(message = "CheckInTime cannot be null)")
     private Time checkInTime;
 
+    // Mora se unijeti u zahtjevu i in i out time - kako riješiti
     @Column(name = "check_out_time")
     @Temporal(TemporalType.TIME)
     private Time checkOutTime;
@@ -76,4 +81,5 @@ public class CheckInRecord {
     public void setUser(User user) {
         this.user = user;
     }
+
 }

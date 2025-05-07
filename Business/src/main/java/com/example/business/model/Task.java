@@ -9,74 +9,119 @@ import java.util.Date;
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
-    @Column(name="datum_pocetka")
+    @Column(name="start_date")
     @Temporal(TemporalType.DATE)
-    private Date datumPocetka;
+    private Date startDate;
 
-    @Column(name="datum_zavrsetka")
+    @Column(name="end_date")
     @Temporal(TemporalType.DATE)
-    private Date datumZavrsetka;
+    private Date endDate;
 
-    @Column(name="datum_predaje")
+    @Column(name="submission_date")
     @Temporal(TemporalType.DATE)
-    private Date datumPredaje;
+    private Date submissionDate;
 
-    @Column(name="naziv")
-    private String naziv;
+    @Column(name="name")
+    private String name;
 
-    @Column(name="opis")
-    private String opis;
+    @Column(name="description")
+    private String description;
 
     @Column(name="status")
     private String status;
 
     @ManyToOne
-    @JoinColumn(name = "projekat_id", nullable = false)
-    private Projekat projekat;
+    @JoinColumn(name = "project_id", nullable = false)
+    private Project project;
 
     @ManyToOne
-    @JoinColumn(name = "korisnik_id", nullable = false)
-    private Korisnik korisnik;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     public Task() { }
 
-    public Task(Date datumPocetka, Date datumZavrsetka, Date datumPredaje, String naziv, String opis, String status, Projekat projekat, Korisnik korisnik) {
-        this.datumPocetka = datumPocetka;
-        this.datumZavrsetka = datumZavrsetka;
-        this.datumPredaje = datumPredaje;
-        this.naziv = naziv;
-        this.opis = opis;
+    public Task(Date startDate, Date endDate, Date submissionDate, String name, String description, String status, Project project, User user) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.submissionDate = submissionDate;
+        this.name = name;
+        this.description = description;
         this.status = status;
-        this.projekat = projekat;
-        this.korisnik = korisnik;
+        this.project = project;
+        this.user = user;
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public Date getStartDate() {
+        return startDate;
+    }
 
-    public Date getDatumPocetka() { return datumPocetka; }
-    public void setDatumPocetka(Date datumPocetka) { this.datumPocetka = datumPocetka; }
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
 
-    public Date getDatumZavrsetka() { return datumZavrsetka; }
-    public void setDatumZavrsetka(Date datumZavrsetka) { this.datumZavrsetka = datumZavrsetka; }
+    public Date getEndDate() {
+        return endDate;
+    }
 
-    public Date getDatumPredaje() { return datumPredaje; }
-    public void setDatumPredaje(Date datumPredaje) { this.datumPredaje = datumPredaje; }
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
-    public String getNaziv() { return naziv; }
-    public void setNaziv(String naziv) { this.naziv = naziv; }
+    public Date getSubmissionDate() {
+        return submissionDate;
+    }
 
-    public String getOpis() { return opis; }
-    public void setOpis(String opis) { this.opis = opis; }
+    public void setSubmissionDate(Date submissionDate) {
+        this.submissionDate = submissionDate;
+    }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public String getName() {
+        return name;
+    }
 
-    public Projekat getProjekat() { return projekat; }
-    public void setProjekat(Projekat projekat) { this.projekat = projekat; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public Korisnik getKorisnik() { return korisnik; }
-    public void setKorisnik(Korisnik korisnik) { this.korisnik = korisnik; }
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 }
