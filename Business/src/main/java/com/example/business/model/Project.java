@@ -1,6 +1,8 @@
 package com.example.business.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Date;
 
@@ -11,6 +13,7 @@ public class Project {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotNull(message = "Project title cannot be null")
     @Column(name="title")
     private String title;
 
@@ -30,9 +33,14 @@ public class Project {
     @Temporal(TemporalType.DATE)
     private Date endDate;
 
+    @Column(name = "status")
+    private String status;
+
+    @NotNull(message = "Project manager cannot be null")
     @Column(name="project_manager")
     private String projectManager;
 
+    @Email(message = "Client contact must be email")
     @Column(name="client_contact")
     private String clientContact;
 
@@ -42,12 +50,13 @@ public class Project {
 
     public Project(){};
 
-    public Project(String title, Date publicationDate, Date takeoverDate, Date startDate, Date endDate, String projectManager, String clientContact, Team team) {
+    public Project(String title, Date publicationDate, Date takeoverDate, Date startDate, Date endDate, String status, String projectManager, String clientContact, Team team) {
         this.title = title;
         this.publicationDate = publicationDate;
         this.takeoverDate = takeoverDate;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.status = status;
         this.projectManager = projectManager;
         this.clientContact = clientContact;
         this.team = team;
@@ -123,6 +132,14 @@ public class Project {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
 

@@ -27,11 +27,11 @@ public class ProjectCommandLineRunner implements CommandLineRunner {
         Optional<Team> teamOpt2 = teamRepository.findById(2);
         if(teamOpt.isPresent() && teamOpt2.isPresent()) {
             Team team = teamOpt.get();
-            Project project1 = new Project("Project A", new Date(), null, new Date(), null, "Haso", "klijentA@example.com", team);
+            Project project1 = new Project("Project A", new Date(), null, new Date(),null, "In progress", "Haso", "klijentA@example.com", team);
             projectRepository.save(project1);
 
             Team team2 = teamOpt2.get();
-            Project project2 = new Project("Project B", new Date(), null, new Date(), null, "Emina", "klijentB@example.com", team2);
+            Project project2 = new Project("Project B", new Date(), null, new Date(), null, "Finished", "Emina", "klijentB@example.com", team2);
             projectRepository.save(project2);
 
             System.out.println("Projects added successfully");

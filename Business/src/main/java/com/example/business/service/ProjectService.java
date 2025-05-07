@@ -29,4 +29,8 @@ public class ProjectService {
     public void deleteProject(int id) {
         projectRepository.deleteById(id);
     }
+
+    public List<Project> getFinishedProjects() {
+        return projectRepository.findByStatus("Finished");
+    }
 }

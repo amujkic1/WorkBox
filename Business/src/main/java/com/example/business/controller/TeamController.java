@@ -3,7 +3,8 @@ package com.example.business.controller;
 import com.example.business.controller.assembler.TeamModelAssembler;
 import com.example.business.exception.TeamNotFoundException;
 import com.example.business.model.Team;
-import com.example.business.repository.TeamRepository;
+import com.example.business.service.TeamService;
+import jakarta.validation.Valid;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -18,47 +19,48 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
+@RequestMapping("/teams")
 public class TeamController {
-    private final TeamRepository teamRepository;
     private  final TeamModelAssembler teamModelAssembler;
+    private final TeamService teamService;
 
-    public TeamController(TeamRepository teamRepository, TeamModelAssembler teamModelAssembler) {
-        this.teamRepository = teamRepository;
+    public TeamController(TeamService teamService, TeamModelAssembler teamModelAssembler) {
+        this.teamService = teamService;
         this.teamModelAssembler = teamModelAssembler;
     }
 
-    @GetMapping("/teams")
+    @GetMapping
     public CollectionModel<EntityModel<Team>>all() {
-        List<EntityModel<Team>> teams = teamRepository.findAll().stream()
+        List<EntityModel<Team>> teams = teamService.getAllTeams().stream()
                 .map(teamModelAssembler::toModel)
                 .collect(Collectors.toList());
         return CollectionModel.of(teams, linkTo(methodOn(TeamController.class).all()).withSelfRel());
     }
 
-    @GetMapping("/teams/{id}")
+    @GetMapping("/{id}")
     public EntityModel<Team> one(@PathVariable Integer id) {
-        Team team = teamRepository.findById(id).orElseThrow(()->new TeamNotFoundException(id));
+        Team team = teamService.getTeamById(id).orElseThrow(()->new TeamNotFoundException(id));
         return teamModelAssembler.toModel(team);
     }
 
-    @PostMapping("/teams")
-    ResponseEntity<?>newTeam(@RequestBody Team newTeam) {
-        EntityModel<Team> entityModel = teamModelAssembler.toModel(teamRepository.save(newTeam));
+    @PostMapping
+    ResponseEntity<?>newTeam(@RequestBody @Valid Team newTeam) {
+        EntityModel<Team> entityModel = teamModelAssembler.toModel(teamService.saveTeam(newTeam));
         return ResponseEntity
                 .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(entityModel);
     }
 
-    @PutMapping("teams/{id}")
-    ResponseEntity<?>replaceTeam(@RequestBody Team newTeam, @PathVariable Integer id) {
-        Team updatedTeam = teamRepository.findById(id)
+    @PutMapping("/{id}")
+    ResponseEntity<?>replaceTeam(@RequestBody @Valid Team newTeam, @PathVariable Integer id) {
+        Team updatedTeam = teamService.getTeamById(id)
                 .map(team -> {
                     team.setName(newTeam.getName());
                     team.setTeamLeader(newTeam.getTeamLeader());
-                    return teamRepository.save(team);
+                    return teamService.saveTeam(team);
                 })
                 .orElseGet(()->{
-                    return teamRepository.save(newTeam);
+                    return teamService.saveTeam(newTeam);
                 });
         EntityModel<Team> entityModel = teamModelAssembler.toModel(updatedTeam);
         return ResponseEntity
@@ -66,9 +68,9 @@ public class TeamController {
                 .body(entityModel);
     }
 
-    @DeleteMapping("/teams/{id}")
+    @DeleteMapping("/{id}")
     ResponseEntity<?>deleteTeam(@PathVariable Integer id) {
-        teamRepository.deleteById(id);
+        teamService.deleteTeam(id);
         return ResponseEntity.noContent().build();
     }
 }
