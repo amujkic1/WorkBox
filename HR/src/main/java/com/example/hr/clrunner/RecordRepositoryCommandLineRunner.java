@@ -25,7 +25,6 @@ public class RecordRepositoryCommandLineRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
 
         Date now = new Date();
-        Time currentTime = new Time(System.currentTimeMillis());
 
         Record record1 = Record.builder()
                 .jmbg(1234567890123L)
@@ -35,7 +34,7 @@ public class RecordRepositoryCommandLineRunner implements CommandLineRunner {
                 .email("email1@example.com")
                 .employmentDate(now)
                 .status("Active")
-                .workingHours(currentTime)
+                .workingHours(8)
                 .build();
 
         Record record2 = Record.builder()
@@ -46,7 +45,7 @@ public class RecordRepositoryCommandLineRunner implements CommandLineRunner {
                 .email("email2@example.com")
                 .employmentDate(now)
                 .status("Inactive")
-                .workingHours(currentTime)
+                .workingHours(8)
                 .build();
 
         Record record3 = Record.builder()
@@ -57,7 +56,7 @@ public class RecordRepositoryCommandLineRunner implements CommandLineRunner {
                 .email("email3@example.com")
                 .employmentDate(now)
                 .status("Pending")
-                .workingHours(currentTime)
+                .workingHours(6)
                 .build();
         recordRepository.save(record1);
         recordRepository.save(record2);
