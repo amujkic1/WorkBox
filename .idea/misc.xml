@@ -11,8 +11,6 @@
         <option value="$PROJECT_DIR$/HR/pom.xml" />
         <option value="$PROJECT_DIR$/Finance/pom.xml" />
         <option value="$PROJECT_DIR$/Auth/pom.xml" />
-        <option value="$PROJECT_DIR$/EurekaServer/pom.xml" />
-        <option value="$PROJECT_DIR$/config/pom.xml" />
       </list>
     </option>
   </component>
