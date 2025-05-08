@@ -86,15 +86,21 @@ public class ApplicationControllerTest {
     }
 
     @Test
-    void testGetApplicationByID() throws Exception{
+    void testGetApplicationByID() throws Exception {
         Application application = new Application(new Date(), "John", "Doe", "john.doe@example.com", "123456789", "http://example.com", "Pending", 90.0, null);
         ApplicationDTO applicationDTO = new ApplicationDTO(new Date(), "John", "Doe", "john.doe@example.com", "123456789", "http://example.com", "Pending", 90.0, 1);
 
         when(applicationRepository.findById(1)).thenReturn(Optional.of(application));
+        when(modelMapper.map(application, ApplicationDTO.class)).thenReturn(applicationDTO);
         when(applicationModelAssembler.toModel(applicationDTO)).thenReturn(EntityModel.of(applicationDTO));
 
-
-
+        mockMvc.perform(get("/applications/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/hal+json"))
+                .andExpect(jsonPath("$.firstName").value("John"))
+                .andExpect(jsonPath("$.lastName").value("Doe"))
+                .andExpect(jsonPath("$.email").value("john.doe@example.com"));
+                //.andExpect(jsonPath("$._links.self.href").exists());
     }
 
 

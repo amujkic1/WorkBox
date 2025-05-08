@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.controller.assembler.EmployeeBenefitModelAssembler;
+import com.example.demo.dto.EmployeeBenefitDTO;
 import com.example.demo.exception.CheckInRecordNotFoundException;
 import com.example.demo.exception.EmployeeBenefitNotFoundException;
 import com.example.demo.models.CheckInRecord;
@@ -82,6 +83,21 @@ public class EmployeeBenefitController {
         employeeBenefitRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/employee_benefit/user/{userId}")
+    public List<EmployeeBenefitDTO> getEmployeeBenefitsByUserId(@PathVariable Integer userId) {
+        return employeeBenefitRepository.findByUser_UserId(userId)
+                .stream()
+                .map(benefit -> new EmployeeBenefitDTO(
+                        benefit.getEmployeeBenefitId(),
+                        benefit.getType(),
+                        benefit.getStatus(),
+                        benefit.getDetails(),
+                        benefit.getUser().getUserId()
+                ))
+                .collect(Collectors.toList());
+    }
+
 
 
     /*
