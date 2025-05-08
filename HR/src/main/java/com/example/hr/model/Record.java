@@ -47,5 +47,5 @@ public class Record {
     private String status;
 
     @NotNull(message = "Working hours cannot be null")
-    private Time workingHours;
+    private Integer workingHours;
 }
