@@ -10,6 +10,7 @@ import com.example.demo.service.EmployeeBenefitService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -84,7 +85,7 @@ public class EmployeeBenefitController {
     }
 
 
-    /*
+    //Batch unos
     @PostMapping("/employee_benefits")
     public CollectionModel<EntityModel<EmployeeBenefit>> insertEmployeeBenefits(@RequestBody List<EmployeeBenefit> employeeBenefits) {
         List<EmployeeBenefit> addedEmployeeBenefits = employeeBenefitService.insertEmployeeBenefits(employeeBenefits);
@@ -93,8 +94,5 @@ public class EmployeeBenefitController {
                 .collect(Collectors.toList());
         return CollectionModel.of(insertedEmployeeBenefits, linkTo(methodOn(EmployeeBenefitController.class).all()).withSelfRel());
     }
-
-    */
-
 
 }
