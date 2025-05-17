@@ -1,4 +1,4 @@
-package com.example.auth.service;
+/*package com.example.auth.service;
 
 import com.example.auth.model.Role;
 import com.example.auth.repository.RoleRepository;
@@ -25,3 +25,4 @@ public class RoleService {
         return roleRepository.save(role);
     }
 }
+*/

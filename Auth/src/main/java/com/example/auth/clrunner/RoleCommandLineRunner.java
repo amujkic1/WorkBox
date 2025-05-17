@@ -1,4 +1,4 @@
-package com.example.auth.clrunner;
+/*package com.example.auth.clrunner;
 
 import com.example.auth.model.Role;
 import com.example.auth.repository.RoleRepository;
@@ -16,10 +16,10 @@ public class RoleCommandLineRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-            Role role1 = new Role("admin","all");
+            Role role1 = Role.ADMIN;
             roleRepository.save(role1);
-
 
             System.out.println("Role added successfully.");
     }
 }
+*/
