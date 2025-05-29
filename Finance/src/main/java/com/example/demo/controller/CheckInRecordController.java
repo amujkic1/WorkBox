@@ -1,16 +1,20 @@
 package com.example.demo.controller;
 
 import com.example.demo.controller.assembler.CheckInRecordModelAssembler;
+import com.example.demo.dto.RecordDTO;
+import com.example.demo.dto.WorkingHours;
 import com.example.demo.exception.CheckInRecordNotFoundException;
 import com.example.demo.models.CheckInRecord;
 import com.example.demo.repository.CheckInRecordRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.CheckInRecordService;
+import com.example.demo.service.ReportService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -18,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,14 +34,19 @@ public class CheckInRecordController {
     private final CheckInRecordRepository checkInRecordRepository;
     private final CheckInRecordModelAssembler checkInRecordModelAssembler;
     private final CheckInRecordService checkInRecordService;
+
     private final UserRepository userRepository;
 
+    private final ReportService reportService;
 
-    public CheckInRecordController(CheckInRecordRepository checkInRecordRepository, CheckInRecordModelAssembler checkInRecordModelAssembler, CheckInRecordService checkInRecordService, UserRepository userRepository) {
+
+    public CheckInRecordController(CheckInRecordRepository checkInRecordRepository, CheckInRecordModelAssembler checkInRecordModelAssembler, CheckInRecordService checkInRecordService, UserRepository userRepository, ReportService reportService) {
         this.checkInRecordRepository = checkInRecordRepository;
         this.checkInRecordModelAssembler = checkInRecordModelAssembler;
         this.checkInRecordService = checkInRecordService;
         this.userRepository = userRepository;
+
+        this.reportService = reportService;
     }
 
 
@@ -117,6 +127,22 @@ public class CheckInRecordController {
     public ResponseEntity<?> deleteCheckInRecord(@PathVariable Integer id){
         checkInRecordRepository.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+
+    @GetMapping("/test")
+    public List<RecordDTO> getTest(){
+        List<RecordDTO> response = reportService.getAllRecords();
+        return response;
+    }
+
+
+    @GetMapping("/timesheet_report")
+    public List<WorkingHours> getTimesheetReportForAllUsers(
+            @RequestParam("fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fromDate,
+            @RequestParam("toDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date toDate
+    ) {
+        return checkInRecordService.calculateWorkingHours(fromDate, toDate);
     }
 
 
