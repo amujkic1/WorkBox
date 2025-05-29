@@ -4,10 +4,6 @@ import com.example.demo.controller.assembler.UserModelAssembler;
 import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.models.User;
 import com.example.demo.repository.UserRepository;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
@@ -69,7 +65,7 @@ public class UserController {
                 .map(user -> {
                     user.setFirstName(newUser.getFirstName());
                     user.setLastName(newUser.getLastName());
-                    user.setSalaryCoefficient(newUser.getSalaryCoefficient());
+                    user.setHourlyRate(newUser.getHourlyRate());
                     user.setUserUUID(newUser.getUserUUID());
                     return userRepository.save(user);
                 })
