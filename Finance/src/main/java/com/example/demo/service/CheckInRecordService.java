@@ -46,6 +46,9 @@ public class CheckInRecordService {
         return checkInRecordRepository.findByCheckInDateBetween(startDate, endDate);
     }
 
+
+
+
     public List<WorkingHours> calculateWorkingHours(Date startDate, Date endDate) {
         List<CheckInRecord> checkInRecords = checkInRecordRepository.findByCheckInDateBetween(startDate, endDate);
         List<RecordDTO> response = reportService.getAllRecords();

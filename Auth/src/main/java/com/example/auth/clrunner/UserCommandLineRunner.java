@@ -17,7 +17,11 @@ public class UserCommandLineRunner implements CommandLineRunner {
 
         Role role = Role.USER;
 
-        User user1 = new User("Emina", "Peljto", "epeljto1", "password123", role);
+        User user1 = new User("Emina",
+                "Peljto",
+                "epeljto1",
+                "password123",
+                role);
         userRepository.save(user1);
 
         System.out.println("User added successfully");

@@ -18,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import java.sql.Time;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,7 +40,7 @@ public class HibernateStatisticsTests {
     @BeforeEach
     void DBinitalize(){
 
-        User user = new User("TestIme1", "TestPrezime1");
+        User user = new User("TestIme1", "TestPrezime1", 1.5);
         userRepository.save(user);
 
         CheckInRecord checkInRecord = new CheckInRecord(new Date(), new Time(123), new Time(123), user);
@@ -48,27 +49,27 @@ public class HibernateStatisticsTests {
         checkInRecordRepository.save(checkInRecord);
 
 
-        user = new User("TestIme2", "TestPrezime");
+        user = new User("TestIme2", "TestPrezime", 1.5);
         userRepository.save(user);
 
         checkInRecord = new CheckInRecord(new Date(), new Time(123), new Time(123), user);
         checkInRecordRepository.save(checkInRecord);
 
-        user = new User("TestIme3", "TestPrezime");
-        userRepository.save(user);
-        checkInRecord = new CheckInRecord(new Date(), new Time(123), new Time(123), user);
-        checkInRecordRepository.save(checkInRecord);
-        checkInRecord = new CheckInRecord(new Date(), new Time(123), new Time(123), user);
-        checkInRecordRepository.save(checkInRecord);
-
-        user = new User("TestIme4", "TestPrezime");
+        user = new User("TestIme3", "TestPrezime", 1.5);
         userRepository.save(user);
         checkInRecord = new CheckInRecord(new Date(), new Time(123), new Time(123), user);
         checkInRecordRepository.save(checkInRecord);
         checkInRecord = new CheckInRecord(new Date(), new Time(123), new Time(123), user);
         checkInRecordRepository.save(checkInRecord);
 
-        user = new User("TestIme5", "TestPrezime");
+        user = new User("TestIme4", "TestPrezime", 1.5);
+        userRepository.save(user);
+        checkInRecord = new CheckInRecord(new Date(), new Time(123), new Time(123), user);
+        checkInRecordRepository.save(checkInRecord);
+        checkInRecord = new CheckInRecord(new Date(), new Time(123), new Time(123), user);
+        checkInRecordRepository.save(checkInRecord);
+
+        user = new User("TestIme5", "TestPrezime", 1.5);
         userRepository.save(user);
         checkInRecord = new CheckInRecord(new Date(), new Time(123), new Time(123), user);
         checkInRecordRepository.save(checkInRecord);
