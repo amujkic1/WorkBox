@@ -1,6 +1,6 @@
-package com.example.SystemEventsServer.repository;
+package com.example.systemeventsserver.repository;
 
-import com.example.SystemEventsServer.model.Event;
+import com.example.systemeventsserver.model.Event;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

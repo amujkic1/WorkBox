@@ -38,6 +38,16 @@ services:
     networks:
       - app-network
 
+  system-events:
+    build:
+      context: ./SystemEventsServer
+    ports:
+      - "6565:6565"
+      - "8085:8085"
+    networks:
+      - app-network
+
+
   test_site:
     image: nginx
     depends_on:
