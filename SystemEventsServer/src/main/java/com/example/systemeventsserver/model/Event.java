@@ -1,4 +1,4 @@
-package com.example.SystemEventsServer.model;
+package com.example.systemeventsserver.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

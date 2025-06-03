@@ -1,7 +1,7 @@
-package com.example.SystemEventsServer.controller;
+package com.example.systemeventsserver.controller;
 
-import com.example.SystemEventsServer.model.Event;
-import com.example.SystemEventsServer.repository.EventRepository;
+import com.example.systemeventsserver.model.Event;
+import com.example.systemeventsserver.repository.EventRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

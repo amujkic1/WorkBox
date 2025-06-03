@@ -13,7 +13,7 @@ public class SystemEventsClient {
 
     public SystemEventsClient() {
         ManagedChannel channel = ManagedChannelBuilder
-                .forAddress("localhost", 6565)
+                .forAddress("system-events", 6565)
                 .usePlaintext()
                 .build();
 

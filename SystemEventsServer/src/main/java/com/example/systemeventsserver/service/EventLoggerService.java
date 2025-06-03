@@ -1,8 +1,8 @@
-package com.example.SystemEventsServer.service;
+package com.example.systemeventsserver.service;
 
 import com.example.systemeventsserver.grpc.EventLoggerGrpc;
-import com.example.SystemEventsServer.model.Event;
-import com.example.SystemEventsServer.repository.EventRepository;
+import com.example.systemeventsserver.model.Event;
+import com.example.systemeventsserver.repository.EventRepository;
 import com.example.systemeventsserver.grpc.EventResponse;
 import io.grpc.stub.StreamObserver;
 import org.lognet.springboot.grpc.GRpcService;
