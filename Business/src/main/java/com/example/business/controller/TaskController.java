@@ -2,6 +2,7 @@ package com.example.business.controller;
 
 import com.example.business.controller.assembler.TaskModelAssembler;
 import com.example.business.exception.TaskNotFoundException;
+import com.example.business.grpc.SystemEventsClient;
 import com.example.business.model.Project;
 import com.example.business.model.Task;
 import com.example.business.model.User;
@@ -29,12 +30,14 @@ public class TaskController {
     private final TaskModelAssembler taskModelAssembler;
     private final ProjectService projectService;
     private final UserService userService;
+    private final SystemEventsClient systemEventsClient;
 
-    public TaskController(TaskService taskService, TaskModelAssembler taskModelAssembler, ProjectService projectService, UserService userService) {
+    public TaskController(TaskService taskService, TaskModelAssembler taskModelAssembler, ProjectService projectService, UserService userService, SystemEventsClient systemEventsClient) {
         this.taskService = taskService;
         this.taskModelAssembler = taskModelAssembler;
         this.projectService = projectService;
         this.userService = userService;
+        this.systemEventsClient = systemEventsClient;
     }
 
     @GetMapping
@@ -42,6 +45,13 @@ public class TaskController {
         List<EntityModel<Task>> tasks = taskService.getAllTasks().stream()
                 .map(taskModelAssembler::toModel)
                 .collect(Collectors.toList());
+
+        try {
+            systemEventsClient.log("admin", "GET", "Task", "200 OK");
+        } catch (Exception e) {
+            System.err.println("Failed to log to SystemEvents: " + e.getMessage());
+        }
+
         return CollectionModel.of(tasks, linkTo(methodOn(TaskController.class).all()).withSelfRel());
     }
 
