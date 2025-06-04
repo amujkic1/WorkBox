@@ -77,6 +77,8 @@ services:
     ports:
       - "6565:6565"
       - "8087:8087"
+    environment:
+      - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka
     networks:
       - app-network
 
