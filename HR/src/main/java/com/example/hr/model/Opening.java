@@ -35,14 +35,12 @@ public class Opening {
     private String benefits;
 
     @NotNull(message = "Start date cannot be null")
-    @PastOrPresent(message = "Start date must be in the past or present")
     private Date startDate;
 
     @NotNull(message = "End date cannot be null")
     @FutureOrPresent(message = "End date must be in the future or present")
     private Date endDate;
 
-    @NotBlank(message = "Result cannot be blank")
     @Size(min = 2, max = 50, message = "Result must be between 2 and 50 characters")
     private String result;
 
