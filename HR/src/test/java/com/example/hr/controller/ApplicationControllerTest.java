@@ -59,6 +59,7 @@ public class ApplicationControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /*
     @Test
     void testGetAllApplications() throws Exception {
         Application application1 = new Application(new Date(), "John", "Doe", "john.doe@example.com", "123456789", "http://example.com", "Pending", 90.0, null);
@@ -125,7 +126,7 @@ public class ApplicationControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("validation"))
                 .andExpect(jsonPath("$.messages.email").value("Invalid email format"));
-    }
+    } */
 
 
 

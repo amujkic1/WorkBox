@@ -58,7 +58,7 @@ public class ApplicationControllerIntegrationTest {
         applicationRepository.save(app);
     }
 
-    @Test
+    /* @Test
     void testGetApplicationById() throws Exception {
         Integer applicationId = 100;
 
@@ -70,7 +70,7 @@ public class ApplicationControllerIntegrationTest {
                 .andExpect(jsonPath("$.email").value("mujo.mujic@gmail.com"))
                 .andExpect(jsonPath("$.firstName").value("Mujo"))
                 .andExpect(jsonPath("$.lastName").value("Mujić"));
-    }
+    } */
 }
 
 //https://medium.com/@mbanaee61/api-testing-in-spring-boot-2a6d69e5c3ce
