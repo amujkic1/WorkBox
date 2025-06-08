@@ -28,6 +28,7 @@ public class AuthenticationService {
                 .lastName(request.getLastName())
                 .username(request.getUsername())
                 .email(request.getEmail())
+                .uuid(request.getUuid())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
                 .build();

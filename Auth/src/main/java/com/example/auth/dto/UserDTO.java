@@ -1,23 +1,20 @@
-package com.example.auth.controller;
+package com.example.auth.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
 @Data
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
+@AllArgsConstructor
+public class UserDTO {
     private String firstName;
     private String lastName;
     private String username;
     private String email;
     private String password;
-    private UUID uuid = UUID.randomUUID();
-
+    private UUID uuid;
 
 }

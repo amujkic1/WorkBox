@@ -47,6 +47,12 @@ public class User {
         this.uuid = UUID.randomUUID();
     }
 
+    public User(String firstName, String lastName, UUID uuid) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.uuid = uuid;
+    }
+
     public String getFirstName() {
         return firstName;
     }

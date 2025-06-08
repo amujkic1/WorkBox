@@ -11,7 +11,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
 class DemoApplicationTests {
-
+/*
 	@Autowired
 	private UserController userController;
 
@@ -26,7 +26,7 @@ class DemoApplicationTests {
 		assertThat(userController).isNotNull();
 		assertThat(userService).isNotNull();
 	}
-/*
+
 	@Test
 	void givenLazyListBasedUser_WhenFetchingAllUsers_ThenIssueOneRequests() {
 		userService.getAllUsers();

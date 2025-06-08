@@ -1,0 +1,36 @@
+package com.example.business.dto;
+
+import java.util.UUID;
+
+public class UserDTO {
+    private String firstName;
+    private String lastName;
+    private String username;
+    private String email;
+    private String password;
+    private UUID uuid;
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+}
