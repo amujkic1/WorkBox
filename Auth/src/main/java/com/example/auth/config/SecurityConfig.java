@@ -36,13 +36,8 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        //.requestMatchers("/h2-console/**").permitAll()
-                        //.requestMatchers("/api/v1/auth/authenticate", "/api/v1/auth/register").permitAll()
-                        //.requestMatchers("/api/v1/auth/users").authenticated()
-                        //.anyRequest().authenticated()
                         .requestMatchers("/api/v1/auth/register**").permitAll()
                         .requestMatchers("/api/v1/auth/authenticate**").permitAll()
-                        .requestMatchers("/api/v1/auth/users").permitAll()  // Testiraj bez autentifikacije
                         .requestMatchers("/h2-console/**").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -57,7 +52,7 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");  // Omogućava sve izvore, ali preporučuje se specifično ograničiti na tvoje domena.
+        config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
