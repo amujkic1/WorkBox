@@ -12,11 +12,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    //@NotNull(message = "First name cannot be null")
+    @NotNull(message = "First name cannot be null")
     @Column(name="first_name")
     private String firstName;
 
-    //@NotNull(message = "Last name cannot be null")
+    @NotNull(message = "Last name cannot be null")
     @Column(name="last_name")
     private String lastName;
 

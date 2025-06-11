@@ -27,51 +27,51 @@ public class User {
     private UUID uuid;
 
     @NotBlank(message = "First name cannot be blank")
-    @Size(min = 2, max = 50, message = "First name must be between 2 and 50 characters")
+    //@Size(min = 2, max = 50, message = "First name must be between 2 and 50 characters")
     private String firstName;
 
     @NotBlank(message = "Last name cannot be blank")
-    @Size(min = 2, max = 50, message = "Last name must be between 2 and 50 characters")
+    //@Size(min = 2, max = 50, message = "Last name must be between 2 and 50 characters")
     private String lastName;
 
     private String role;
 
-    @NotBlank(message = "Username cannot be blank")
-    @Size(min = 5, max = 20, message = "Username must be between 5 and 20 characters")
-    @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "Username can only contain letters, digits, and underscores")
+    //@NotBlank(message = "Username cannot be blank")
+    //@Size(min = 5, max = 20, message = "Username must be between 5 and 20 characters")
+    //@Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "Username can only contain letters, digits, and underscores")
     private String username;
 
-    @NotBlank(message = "Password cannot be blank")
-    @Size(min = 8, message = "Password must be at least 8 characters long")
+    //@NotBlank(message = "Password cannot be blank")
+    //@Size(min = 8, message = "Password must be at least 8 characters long")
     private String password;
 
-    @Column(unique = true)
-    @NotNull(message = "JMBG cannot be null")
+    //@Column(unique = true)
+    //@NotNull(message = "JMBG cannot be null")
     private Long jmbg;
 
-    @NotNull(message = "Birth date cannot be null")
-    @Past(message = "Birth date must be in the past")
+    //@NotNull(message = "Birth date cannot be null")
+    //@Past(message = "Birth date must be in the past")
     private Date birthDate;
 
-    @NotBlank(message = "Contact number cannot be blank")
-    @Pattern(regexp = "^\\+?[0-9]*$", message = "Contact number must be a valid number")
+    //@NotBlank(message = "Contact number cannot be blank")
+    //@Pattern(regexp = "^\\+?[0-9]*$", message = "Contact number must be a valid number")
     private String contactNumber;
 
-    @NotBlank(message = "Address cannot be blank")
+    //@NotBlank(message = "Address cannot be blank")
     private String address;
 
-    @NotBlank(message = "Email cannot be blank")
-    @Email(message = "Email must be valid")
+    //@NotBlank(message = "Email cannot be blank")
+    //@Email(message = "Email must be valid")
     private String email;
 
-    @NotNull(message = "Employment date cannot be null")
-    @PastOrPresent(message = "Employment date must be in the past or present")
+    //@NotNull(message = "Employment date cannot be null")
+    //@PastOrPresent(message = "Employment date must be in the past or present")
     private Date employmentDate;
 
-    @NotBlank(message = "Status cannot be blank")
+    //@NotBlank(message = "Status cannot be blank")
     private String status;
 
-    @NotNull(message = "Working hours cannot be null")
+    //@NotNull(message = "Working hours cannot be null")
     private Time workingHours;
 
     @ManyToMany
