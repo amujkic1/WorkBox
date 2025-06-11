@@ -18,33 +18,27 @@ public class UserEventProducer {
         this.rabbitTemplate = rabbitTemplate;
     }
 
-    // Metoda za slanje UserCreatedEvent sa JSON serijalizacijom
     public void sendUserCreatedEvent(UserCreatedEvent event) {
         try {
-            // Koristimo Jackson2JsonMessageConverter za konvertovanje objekta u JSON
             rabbitTemplate.convertAndSend(RabbitMQConfig.USER_EVENT_EXCHANGE, "user.created", event);
         } catch (Exception e) {
-            e.printStackTrace();  // Obrada greške (logovanje, ponovni pokušaj itd.)
+            e.printStackTrace();
         }
     }
 
-    // Metoda za slanje UserCreateRollbackEvent sa JSON serijalizacijom
     public void sendUserCreateRollbackEvent(UserCreateRollbackEvent event) {
         try {
-            // Koristimo Jackson2JsonMessageConverter za konvertovanje objekta u JSON
             rabbitTemplate.convertAndSend(RabbitMQConfig.USER_EVENT_EXCHANGE, "user.create.rollback", event);
         } catch (Exception e) {
-            e.printStackTrace();  // Obrada greške (logovanje, ponovni pokušaj itd.)
+            e.printStackTrace();
         }
     }
 
-    // Metoda za slanje UserCreateConfirmedEvent sa JSON serijalizacijom
     public void sendUserCreateConfirmedEvent(UserCreateConfirmedEvent event) {
         try {
-            // Koristimo Jackson2JsonMessageConverter za konvertovanje objekta u JSON
             rabbitTemplate.convertAndSend(RabbitMQConfig.USER_EVENT_EXCHANGE, "user.create.confirmed", event);
         } catch (Exception e) {
-            e.printStackTrace();  // Obrada greške (logovanje, ponovni pokušaj itd.)
+            e.printStackTrace();
         }
     }
 }

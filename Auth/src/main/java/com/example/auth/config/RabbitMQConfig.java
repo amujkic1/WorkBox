@@ -17,44 +17,38 @@ public class RabbitMQConfig {
     public static final String USER_EVENT_EXCHANGE = "user.event.exchange";
     public static final String USER_CREATED_QUEUE = "user.created.queue";
 
-    // Kreirajte Queue
     @Bean
     public Queue userCreatedQueue() {
         return new Queue(USER_CREATED_QUEUE, true);
     }
 
-    // Kreirajte Exchange
     @Bean
     public TopicExchange userEventExchange() {
         return new TopicExchange(USER_EVENT_EXCHANGE);
     }
 
-    // Konfigurišite ConnectionFactory za RabbitMQ
     @Bean
     public ConnectionFactory connectionFactory() {
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory("rabbitmq");
         //CachingConnectionFactory connectionFactory = new CachingConnectionFactory("localhost");
-        connectionFactory.setUsername("guest");  // Korisničko ime za RabbitMQ
-        connectionFactory.setPassword("guest");  // Lozinka za RabbitMQ
+        connectionFactory.setUsername("guest");
+        connectionFactory.setPassword("guest");
         return connectionFactory;
     }
 
-    // RabbitTemplate za slanje poruka sa JSON converterom
     @Bean
     public RabbitTemplate rabbitTemplate() {
         RabbitTemplate rabbitTemplate = new RabbitTemplate();
-        rabbitTemplate.setConnectionFactory(connectionFactory()); // Postavite ConnectionFactory
-        rabbitTemplate.setMessageConverter(jackson2JsonMessageConverter());  // Postavite JSON converter
+        rabbitTemplate.setConnectionFactory(connectionFactory());
+        rabbitTemplate.setMessageConverter(jackson2JsonMessageConverter());
         return rabbitTemplate;
     }
 
-    // Jackson2JsonMessageConverter koji omogućava rad sa JSON porukama
     @Bean
     public Jackson2JsonMessageConverter jackson2JsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
     }
 
-    // Binding između queue i exchange
     @Bean
     public Binding bindingUserCreated(Queue userCreatedQueue, TopicExchange userEventExchange) {
         return BindingBuilder.bind(userCreatedQueue).to(userEventExchange).with("user.created");

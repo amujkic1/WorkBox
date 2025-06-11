@@ -1,5 +1,6 @@
 package com.example.auth.controller;
 
+import com.example.auth.config.JwtService;
 import com.example.auth.events.UserCreatedEvent;
 import com.example.auth.messaging.UserEventProducer;
 import com.example.auth.service.AuthenticationService;
@@ -14,15 +15,18 @@ public class AuthController {
 
     private final AuthenticationService service;
     private final UserEventProducer userEventProducer;
+    private final JwtService jwtService;
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request){
         var authResponse = service.register(request);
 
-        // Pretpostavljam da u service.register vraća korisnika ili UUID da možeš poslati event
         userEventProducer.sendUserCreatedEvent(
                 new UserCreatedEvent(
-                        authResponse.getUuid()
+                        authResponse.getUuid(),
+                        jwtService.extractFirstName(authResponse.getToken()),
+                        jwtService.extractLastName(authResponse.getToken()),
+                        jwtService.extractEmail(authResponse.getToken())
                 )
         );
 

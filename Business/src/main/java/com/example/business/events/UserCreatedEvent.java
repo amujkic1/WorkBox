@@ -15,10 +15,8 @@ public class UserCreatedEvent implements Serializable {
     private String lastName;
     private String email;
 
-    // Jackson koristi konstruktor bez parametara, koji već imate
     public UserCreatedEvent() {}
 
-    // Konstruktor koji Jackson koristi za serijalizaciju
     @JsonCreator
     public UserCreatedEvent(
             @JsonProperty("uuid") UUID uuid,

@@ -15,10 +15,8 @@ public class UserCreatedEvent implements Serializable {
     private String lastName;
     private String email;
 
-    // Konstruktor bez parametara, Jackson ga koristi
     public UserCreatedEvent() {}
 
-    // Konstruktor koji Jackson koristi za deseralizaciju
     @JsonCreator
     public UserCreatedEvent(
             @JsonProperty("uuid") UUID uuid,
@@ -31,12 +29,10 @@ public class UserCreatedEvent implements Serializable {
         this.email = email;
     }
 
-    // Dodatni konstruktor sa UUID parametrom, za jednostavne slučajeve
-    public UserCreatedEvent(UUID uuid) {
+    /*public UserCreatedEvent(UUID uuid) {
         this.uuid = uuid;
-    }
+    }*/
 
-    // Getters i Setters
     public UUID getUuid() { return uuid; }
     public void setUuid(UUID uuid) { this.uuid = uuid; }
     public String getFirstName() { return firstName; }
