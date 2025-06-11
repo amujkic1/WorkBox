@@ -7,8 +7,8 @@ services:
       - "15672:15672"  # RabbitMQ management console
       - "5672:5672"    # RabbitMQ default port
     environment:
-      - RABBITMQ_DEFAULT_USER=user
-      - RABBITMQ_DEFAULT_PASS=password
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:15672/api/overview" ]
       interval: 10s

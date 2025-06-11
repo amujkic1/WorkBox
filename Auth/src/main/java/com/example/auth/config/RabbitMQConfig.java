@@ -36,6 +36,12 @@ public class RabbitMQConfig {
         return new Queue(registrationQueue3);
     }
 
+    // Queue za status događaje (rollback)
+    //@Bean
+    //public Queue statusQueue() {
+    //    return new Queue("user-registration-status", true);
+    //}
+
     @Bean
     public TopicExchange exchange(){
         return new TopicExchange(exchange);
@@ -76,5 +82,30 @@ public class RabbitMQConfig {
         rabbitTemplate.setMessageConverter(converter());
         return rabbitTemplate;
     }
+
+
+
+
+
+    @Bean
+    public FanoutExchange registrationStatusFanoutExchange() {
+        return new FanoutExchange("registration.status.exchange");
+    }
+
+
+    @Bean
+    public Queue authStatusQueue() {
+        return new Queue("user-registration-status.auth", true); // Jedinstveni red za AUTH
+    }
+
+    @Bean
+    public Binding authStatusBinding() {
+        return BindingBuilder
+                .bind(authStatusQueue())
+                .to(registrationStatusFanoutExchange());
+    }
+
+
+
 
 }

@@ -40,4 +40,16 @@ public class UserDTO {
     public UUID getUuid() {
         return uuid;
     }
+
+    @Override
+    public String toString() {
+        return "UserDTO{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", uuid=" + uuid +
+                '}';
+    }
 }
