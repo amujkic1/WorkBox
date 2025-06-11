@@ -11,13 +11,13 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserRepository userRepository;
 
-    @GetMapping
+    @GetMapping("/users")
     public List<User> all() {
         return userRepository.findAll();
     }
