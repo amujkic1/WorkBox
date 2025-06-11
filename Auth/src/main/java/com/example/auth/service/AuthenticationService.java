@@ -4,6 +4,8 @@ import com.example.auth.config.JwtService;
 import com.example.auth.controller.AuthenticationRequest;
 import com.example.auth.controller.AuthenticationResponse;
 import com.example.auth.controller.RegisterRequest;
+import com.example.auth.events.UserCreatedEvent;
+import com.example.auth.messaging.UserEventProducer;
 import com.example.auth.model.Role;
 import com.example.auth.model.User;
 import com.example.auth.repository.UserRepository;
@@ -13,6 +15,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -21,6 +25,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final UserEventProducer userEventProducer;
 
     public AuthenticationResponse register(RegisterRequest request) {
         var user = User.builder()
@@ -30,11 +35,27 @@ public class AuthenticationService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
+                .uuid(UUID.randomUUID())
                 .build();
+
+        System.out.println(user);
         repository.save(user);
         var jwtToken = jwtService.generateToken(user);
-        return AuthenticationResponse.builder().token(jwtToken).build();
+
+        String uuidString = jwtService.extractUuid(jwtToken);
+        UUID uuid = UUID.fromString(uuidString);
+
+        String firstName = jwtService.extractFirstName(jwtToken);
+        String lastName = jwtService.extractLastName(jwtToken);
+        String email = jwtService.extractEmail(jwtToken);
+
+        userEventProducer.sendUserCreatedEvent(
+                new UserCreatedEvent(uuid, firstName, lastName, email)
+        );
+
+        return AuthenticationResponse.builder().token(jwtToken).uuid(uuid).build();
     }
+
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         authenticationManager.authenticate(

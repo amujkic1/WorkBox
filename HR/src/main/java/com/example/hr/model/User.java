@@ -9,6 +9,7 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -22,6 +23,8 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    private UUID uuid;
 
     @NotBlank(message = "First name cannot be blank")
     @Size(min = 2, max = 50, message = "First name must be between 2 and 50 characters")
@@ -42,14 +45,9 @@ public class User {
     @Size(min = 8, message = "Password must be at least 8 characters long")
     private String password;
 
-//    @OneToOne
-//    @JoinColumn(name = "jmbg", referencedColumnName = "JMBG", unique = true)
-//    private Record record;
-
     @Column(unique = true)
     @NotNull(message = "JMBG cannot be null")
     private Long jmbg;
-
 
     @NotNull(message = "Birth date cannot be null")
     @Past(message = "Birth date must be in the past")
@@ -85,7 +83,18 @@ public class User {
     @Builder.Default
     private List<Opening> openings = new ArrayList<>();
 
-    // Pomoćne metode za održavanje veza u @ManyToMany relaciji
+    public User(Integer id, String firstName, String lastName, String role,
+                String username, String password, String email) {
+        this.id = id;
+        this.uuid = UUID.randomUUID();
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.role = role;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
+
     public void addOpening(Opening opening) {
         this.openings.add(opening);
         opening.getUsers().add(this);

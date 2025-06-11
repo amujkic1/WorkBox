@@ -1,6 +1,21 @@
 version: '3.9'
 
 services:
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - app-network
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   eureka-server:
     build:
       context: ./EurekaServer
@@ -119,6 +134,10 @@ services:
     networks:
       - app-network
 
+
+
 networks:
   app-network:
     driver: bridge
+
+

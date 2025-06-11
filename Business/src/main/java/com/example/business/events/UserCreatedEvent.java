@@ -1,0 +1,43 @@
+package com.example.business.events;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.io.Serializable;
+import java.util.UUID;
+
+public class UserCreatedEvent implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    private UUID uuid;
+    private String firstName;
+    private String lastName;
+    private String email;
+
+    // Jackson koristi konstruktor bez parametara, koji već imate
+    public UserCreatedEvent() {}
+
+    // Konstruktor koji Jackson koristi za serijalizaciju
+    @JsonCreator
+    public UserCreatedEvent(
+            @JsonProperty("uuid") UUID uuid,
+            @JsonProperty("firstName") String firstName,
+            @JsonProperty("lastName") String lastName,
+            @JsonProperty("email") String email) {
+        this.uuid = uuid;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+    }
+
+    // Getters and Setters
+    public UUID getUuid() { return uuid; }
+    public void setUuid(UUID uuid) { this.uuid = uuid; }
+    public String getFirstName() { return firstName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public String getLastName() { return lastName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+}
