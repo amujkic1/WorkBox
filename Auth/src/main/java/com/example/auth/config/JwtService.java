@@ -34,10 +34,17 @@ public class JwtService {
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails){
         User user = (User) userDetails;
 
+        System.out.println("generate tokennnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn");
+        System.out.println(user.getEmail());
+        System.out.println(user.getUsername());
+        System.out.println(user.getUname());
+
         extraClaims.put("firstName", user.getFirstName());
         extraClaims.put("lastName", user.getLastName());
         extraClaims.put("email", user.getEmail());
         extraClaims.put("uuid", user.getUuid());
+        extraClaims.put("uname", user.getUname());
+        extraClaims.put("password", user.getPassword());
 
         return Jwts
                 .builder()
@@ -90,5 +97,13 @@ public class JwtService {
 
     public String extractUuid(String token) {
         return extractClaim(token, claims -> claims.get("uuid", String.class));
+    }
+
+    public String extractPassword(String token) {
+        return extractClaim(token, claims -> claims.get("password", String.class));
+    }
+
+    public String extractUname(String token) {
+        return extractClaim(token, claims -> claims.get("uname", String.class));
     }
 }

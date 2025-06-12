@@ -24,6 +24,9 @@ public class UserEventConsumer {
         user.setUuid(event.getUuid());
         user.setFirstName(event.getFirstName());
         user.setLastName(event.getLastName());
+        user.setEmail(event.getEmail());
+        user.setUsername(event.getUsername());
+        user.setPassword(event.getPassword());
 
         System.out.println("userrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
         System.out.println(user);

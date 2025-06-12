@@ -2,10 +2,12 @@ package com.example.auth.events;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.UUID;
 
+@Data
 public class UserCreatedEvent implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -14,6 +16,8 @@ public class UserCreatedEvent implements Serializable {
     private String firstName;
     private String lastName;
     private String email;
+    private String username;
+    private String password;
 
     public UserCreatedEvent() {}
 
@@ -22,23 +26,16 @@ public class UserCreatedEvent implements Serializable {
             @JsonProperty("uuid") UUID uuid,
             @JsonProperty("firstName") String firstName,
             @JsonProperty("lastName") String lastName,
-            @JsonProperty("email") String email) {
+            @JsonProperty("email") String email,
+            @JsonProperty("username") String username,
+            @JsonProperty("password") String password)
+    {
         this.uuid = uuid;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.username = username;
+        this.password = password;
     }
 
-    /*public UserCreatedEvent(UUID uuid) {
-        this.uuid = uuid;
-    }*/
-
-    public UUID getUuid() { return uuid; }
-    public void setUuid(UUID uuid) { this.uuid = uuid; }
-    public String getFirstName() { return firstName; }
-    public void setFirstName(String firstName) { this.firstName = firstName; }
-    public String getLastName() { return lastName; }
-    public void setLastName(String lastName) { this.lastName = lastName; }
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
 }
