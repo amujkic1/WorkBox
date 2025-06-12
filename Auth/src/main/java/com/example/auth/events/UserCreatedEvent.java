@@ -18,6 +18,7 @@ public class UserCreatedEvent implements Serializable {
     private String email;
     private String username;
     private String password;
+    private String role;
 
     public UserCreatedEvent() {}
 
@@ -28,14 +29,15 @@ public class UserCreatedEvent implements Serializable {
             @JsonProperty("lastName") String lastName,
             @JsonProperty("email") String email,
             @JsonProperty("username") String username,
-            @JsonProperty("password") String password)
-    {
+            @JsonProperty("password") String password,
+            @JsonProperty("role") String role) {
         this.uuid = uuid;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.username = username;
         this.password = password;
+        this.role = role;
     }
 
 }

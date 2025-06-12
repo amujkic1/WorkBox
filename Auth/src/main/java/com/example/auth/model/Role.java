@@ -2,5 +2,7 @@ package com.example.auth.model;
 
 public enum Role {
     USER,
-    ADMIN
+    HR,
+    FINANCE_MANAGER,
+    BUSINESS_MANAGER
 }

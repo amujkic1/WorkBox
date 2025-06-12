@@ -29,23 +29,19 @@ public class AuthenticationService {
 
     public AuthenticationResponse register(RegisterRequest request) {
 
-        System.out.println("requesttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt");
-        System.out.println(request);
-        System.out.println("geterrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
-        System.out.println(request.getUsername());
-
+        if (repository.findByEmail(request.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("Korisnik sa tim email-om već postoji");
+        }
+        
         var user = User.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
+                .role(request.getRole())
                 .uuid(UUID.randomUUID())
                 .build();
-
-        System.out.println("unameeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
-        System.out.println(user.getUname());
 
         repository.save(user);
         var jwtToken = jwtService.generateToken(user);
@@ -56,13 +52,12 @@ public class AuthenticationService {
         String firstName = jwtService.extractFirstName(jwtToken);
         String lastName = jwtService.extractLastName(jwtToken);
         String email = jwtService.extractEmail(jwtToken);
-        //String username = jwtService.extractUsername(jwtToken);
-        System.out.println("u AuthenticationService iz jwt tokena unameeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
         String username = jwtService.extractUname(jwtToken);
         String password = jwtService.extractPassword(jwtToken);
+        String role = jwtService.extractRole(jwtToken);
 
         userEventProducer.sendUserCreatedEvent(
-                new UserCreatedEvent(uuid, firstName, lastName, email, username, password)
+                new UserCreatedEvent(uuid, firstName, lastName, email, username, password, role)
         );
 
         return AuthenticationResponse.builder().token(jwtToken).uuid(uuid).build();

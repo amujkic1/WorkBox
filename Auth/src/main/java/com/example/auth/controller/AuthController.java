@@ -20,15 +20,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request){
 
-        System.out.println("u /register ruti - requestttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt");
-        System.out.println(request);
-
         var authResponse = service.register(request);
-
-        System.out.println("authresponseeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
-        System.out.println(jwtService.extractEmail(authResponse.getToken()));
-        System.out.println("u AuthController jwtService.extractUnameeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
-        System.out.println(jwtService.extractUname(authResponse.getToken()));
 
         userEventProducer.sendUserCreatedEvent(
                 new UserCreatedEvent(
@@ -37,8 +29,8 @@ public class AuthController {
                         jwtService.extractLastName(authResponse.getToken()),
                         jwtService.extractEmail(authResponse.getToken()),
                         jwtService.extractUname(authResponse.getToken()),
-//                        jwtService.extractUsername(authResponse.getToken()),
-                        jwtService.extractPassword(authResponse.getToken())
+                        jwtService.extractPassword(authResponse.getToken()),
+                        jwtService.extractRole(authResponse.getToken())
                 )
         );
 

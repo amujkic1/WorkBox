@@ -15,11 +15,10 @@ public class UserEventConsumer {
         this.userService = userService;
     }
 
-    @RabbitListener(queues = "user.created.queue")
+    @RabbitListener(queues = "hr.user.created.queue")
     public void handleUserCreatedEvent(UserCreatedEvent event) {
         System.out.println("Received UserCreatedEvent: " + event.getUuid());
 
-        // Kreirajte User entitet iz UserCreatedEvent
         User user = new User();
         user.setUuid(event.getUuid());
         user.setFirstName(event.getFirstName());
@@ -28,10 +27,6 @@ public class UserEventConsumer {
         user.setUsername(event.getUsername());
         user.setPassword(event.getPassword());
 
-        System.out.println("userrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
-        System.out.println(user);
-
-        // Spremite korisnika u bazu
         userService.saveUser(user);
     }
 }

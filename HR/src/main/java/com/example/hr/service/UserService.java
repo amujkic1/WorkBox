@@ -38,8 +38,11 @@ public class UserService {
 
     public User saveUser(User user) {
 
-        System.out.println("servisssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss");
-        System.out.println(user);
+        if (userRepository.existsByUuid(user.getUuid())) {
+            System.out.println("Korisnik već postoji, neće se ponovo spremiti.");
+            return user;
+        }
+
         return userRepository.save(user);
     }
 }

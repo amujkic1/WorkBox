@@ -45,6 +45,7 @@ public class JwtService {
         extraClaims.put("uuid", user.getUuid());
         extraClaims.put("uname", user.getUname());
         extraClaims.put("password", user.getPassword());
+        extraClaims.put("role", user.getRole());
 
         return Jwts
                 .builder()
@@ -105,5 +106,9 @@ public class JwtService {
 
     public String extractUname(String token) {
         return extractClaim(token, claims -> claims.get("uname", String.class));
+    }
+
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
     }
 }
