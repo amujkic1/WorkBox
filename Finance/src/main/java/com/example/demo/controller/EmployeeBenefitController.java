@@ -99,8 +99,6 @@ public class EmployeeBenefitController {
                 .collect(Collectors.toList());
     }
 
-
-
     //Batch unos
     @PostMapping("/employee_benefits")
     public CollectionModel<EntityModel<EmployeeBenefit>> insertEmployeeBenefits(@RequestBody List<EmployeeBenefit> employeeBenefits) {
