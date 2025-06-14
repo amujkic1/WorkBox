@@ -2,10 +2,12 @@ package com.example.demo.controller;
 
 import com.example.demo.controller.assembler.EmployeeBenefitModelAssembler;
 import com.example.demo.dto.EmployeeBenefitDTO;
+import com.example.demo.dto.UserWithBenefitsDTO;
 import com.example.demo.exception.CheckInRecordNotFoundException;
 import com.example.demo.exception.EmployeeBenefitNotFoundException;
 import com.example.demo.models.CheckInRecord;
 import com.example.demo.models.EmployeeBenefit;
+import com.example.demo.models.User;
 import com.example.demo.repository.EmployeeBenefitRepository;
 import com.example.demo.service.EmployeeBenefitService;
 import org.springframework.hateoas.CollectionModel;
@@ -16,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -107,6 +111,32 @@ public class EmployeeBenefitController {
                 .map(employeeBenefitModelAssembler::toModel)
                 .collect(Collectors.toList());
         return CollectionModel.of(insertedEmployeeBenefits, linkTo(methodOn(EmployeeBenefitController.class).all()).withSelfRel());
+    }
+
+
+    @GetMapping("/employee_benefits/grouped_by_user")
+    public List<UserWithBenefitsDTO> getBenefitsGroupedByUser() {
+        List<EmployeeBenefit> allBenefits = employeeBenefitRepository.findAll();
+
+        Map<Integer, List<EmployeeBenefit>> grouped = allBenefits.stream()
+                .collect(Collectors.groupingBy(b -> b.getUser().getUserId()));
+
+        return grouped.entrySet().stream()
+                .map(entry -> {
+                    List<EmployeeBenefit> benefits = entry.getValue();
+                    if (benefits.isEmpty()) return null;
+
+                    User user = benefits.get(0).getUser();
+
+                    return new UserWithBenefitsDTO(
+                            user.getUserId(),
+                            user.getFirstName(),
+                            user.getLastName(),
+                            benefits
+                    );
+                })
+                .filter(Objects::nonNull)
+                .toList();
     }
 
 }
