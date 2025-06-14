@@ -12,11 +12,10 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="demo (2)" />
+        <module name="demo (1)" />
         <module name="eureka" />
-        <module name="demo (3)" />
         <module name="SystemEventsServer" />
         <module name="api-gateway" />
-        <module name="demo" />
         <module name="config" />
       </profile>
       <profile name="Annotation profile for demo" enabled="true">
@@ -26,8 +25,9 @@
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
         </processorPath>
-        <module name="demo (1)" />
+        <module name="demo" />
         <module name="demo (4)" />
+        <module name="demo (3)" />
       </profile>
     </annotationProcessing>
   </component>
