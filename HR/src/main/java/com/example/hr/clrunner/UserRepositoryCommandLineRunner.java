@@ -52,15 +52,7 @@ public class UserRepositoryCommandLineRunner implements CommandLineRunner {
                 .role("Admin")
                 .username("Emina")
                 .password("password1")
-                .jmbg(1234567890123L)
-                .birthDate(now)
-                .contactNumber("+38761234567")
-                .address("Adresa 1")
                 .email("email1@example.com")
-                .employmentDate(now)
-                .status("Active")
-                .workingHours(currentTime)
-                //.record(records.get(0))
                 .build();
 
         User user2 = User.builder()
@@ -69,15 +61,7 @@ public class UserRepositoryCommandLineRunner implements CommandLineRunner {
                 .role("Admin")
                 .username("Hasan")
                 .password("password2")
-                .jmbg(9876543210123L)
-                .birthDate(now)
-                .contactNumber("+38761234568")
-                .address("Adresa 2")
                 .email("email2@example.com")
-                .employmentDate(now)
-                .status("Inactive")
-                .workingHours(currentTime)
-                //.record(records.get(1))
                 .build();
 
         User user3 = User.builder()
@@ -86,15 +70,7 @@ public class UserRepositoryCommandLineRunner implements CommandLineRunner {
                 .role("Admin")
                 .username("Ajna123")
                 .password("password3")
-                .jmbg(4567891230123L)
-                .birthDate(now)
-                .contactNumber("+38761234569")
-                .address("Adresa 3")
                 .email("email3@example.com")
-                .employmentDate(now)
-                .status("Pending")
-                .workingHours(currentTime)
-                //.record(records.get(2))
                 .build();
 
         userRepository.save(user1);

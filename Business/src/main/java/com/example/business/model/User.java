@@ -38,6 +38,8 @@ public class User {
         this.uuid = UUID.randomUUID();
     }
 
+    public void setUuid(UUID uuid){ this.uuid = uuid; }
+
     public User() { }
 
     public User(String firstName, String lastName, Team team) {

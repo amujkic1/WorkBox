@@ -6,7 +6,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.hibernate.annotations.DialectOverride;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -33,12 +32,27 @@ public class JwtService {
     }
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails){
+        User user = (User) userDetails;
+
+        System.out.println("generate tokennnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn");
+        System.out.println(user.getEmail());
+        System.out.println(user.getUsername());
+        System.out.println(user.getUname());
+
+        extraClaims.put("firstName", user.getFirstName());
+        extraClaims.put("lastName", user.getLastName());
+        extraClaims.put("email", user.getEmail());
+        extraClaims.put("uuid", user.getUuid());
+        extraClaims.put("uname", user.getUname());
+        extraClaims.put("password", user.getPassword());
+        extraClaims.put("role", user.getRole());
+
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
-                .setSubject(((User) userDetails).getEmail())
+                .setSubject(user.getEmail())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()+1000*60*24))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24)) // token važi 24h
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -68,5 +82,33 @@ public class JwtService {
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    public String extractFirstName(String token) {
+        return extractClaim(token, claims -> claims.get("firstName", String.class));
+    }
+
+    public String extractLastName(String token) {
+        return extractClaim(token, claims -> claims.get("lastName", String.class));
+    }
+
+    public String extractEmail(String token) {
+        return extractClaim(token, claims -> claims.get("email", String.class));
+    }
+
+    public String extractUuid(String token) {
+        return extractClaim(token, claims -> claims.get("uuid", String.class));
+    }
+
+    public String extractPassword(String token) {
+        return extractClaim(token, claims -> claims.get("password", String.class));
+    }
+
+    public String extractUname(String token) {
+        return extractClaim(token, claims -> claims.get("uname", String.class));
+    }
+
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
     }
 }
