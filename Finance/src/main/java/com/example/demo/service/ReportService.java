@@ -43,7 +43,8 @@ public class ReportService {
 
     // Sinhroni poziv
     public List<RecordDTO> getAllRecords() {
-        String url = "http://hr/records";
+        String url = "http://api-gateway:8080/hr/records";
+        //String url = "http://hr/records";
         ResponseEntity<CollectionModel<EntityModel<RecordDTO>>> responseEntity =
                 restTemplate.exchange(url, HttpMethod.GET, null,
                         new ParameterizedTypeReference<CollectionModel<EntityModel<RecordDTO>>>() {});
