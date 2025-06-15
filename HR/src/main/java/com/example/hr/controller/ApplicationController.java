@@ -35,7 +35,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping("/hr")
 @Tag(name="ApplicationController", description = "API for applications management")
 public class ApplicationController {
 
