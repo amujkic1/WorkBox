@@ -11,12 +11,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="api-gateway" />
         <module name="demo (2)" />
-        <module name="demo (1)" />
+        <module name="config" />
         <module name="eureka" />
         <module name="SystemEventsServer" />
-        <module name="api-gateway" />
-        <module name="config" />
+        <module name="demo (3)" />
       </profile>
       <profile name="Annotation profile for demo" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -26,8 +26,17 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
         </processorPath>
         <module name="demo" />
+        <module name="demo (1)" />
+      </profile>
+      <profile name="Annotation profile for demo (4)" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.38/lombok-1.18.38.jar" />
+        </processorPath>
         <module name="demo (4)" />
-        <module name="demo (3)" />
       </profile>
     </annotationProcessing>
   </component>
