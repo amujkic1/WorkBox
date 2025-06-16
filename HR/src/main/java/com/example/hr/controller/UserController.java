@@ -32,7 +32,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping("/users")
 @Tag(name="UserController", description = "API for user management")
 public class UserController {
 
@@ -52,7 +51,7 @@ public class UserController {
         this.requestRepository = requestRepository;
     }
 
-    @GetMapping
+    @GetMapping("/users")
     @Operation(summary = "Retreive all users", description = "Returns a list of all users")
     public CollectionModel<EntityModel<UserDTO>> all(){
         List<EntityModel<UserDTO>> users = userRepository.findAll().stream()

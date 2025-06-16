@@ -15,6 +15,7 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 public class RabbitMQConfig {
 
     public static final String USER_EVENT_EXCHANGE = "user.event.exchange";
+    public static final String AUTH_USER_CREATION_FAILED_QUEUE = "auth.user.creation.failed.queue";
 
     // Redovi za različite mikroservise
     public static final String HR_USER_CREATED_QUEUE = "hr.user.created.queue";
@@ -77,49 +78,14 @@ public class RabbitMQConfig {
     public Binding bindingFinanceManagerUserCreated(Queue financeManagerUserCreatedQueue, TopicExchange userEventExchange) {
         return BindingBuilder.bind(financeManagerUserCreatedQueue).to(userEventExchange).with("finance.manager.user.created");
     }
+
+    @Bean
+    public Queue authUserCreationFailedQueue() {
+        return new Queue(AUTH_USER_CREATION_FAILED_QUEUE, true);
+    }
+
+    @Bean
+    public Binding bindingAuthUserCreationFailed(Queue authUserCreationFailedQueue, TopicExchange userEventExchange) {
+        return BindingBuilder.bind(authUserCreationFailedQueue).to(userEventExchange).with("auth.user.creation.failed");
+    }
 }
-
-
-/*@Configuration
-public class RabbitMQConfig {
-
-    public static final String USER_EVENT_EXCHANGE = "user.event.exchange";
-    public static final String USER_CREATED_QUEUE = "user.created.queue";
-
-    @Bean
-    public Queue userCreatedQueue() {
-        return new Queue(USER_CREATED_QUEUE, true);
-    }
-
-    @Bean
-    public TopicExchange userEventExchange() {
-        return new TopicExchange(USER_EVENT_EXCHANGE);
-    }
-
-    @Bean
-    public ConnectionFactory connectionFactory() {
-        CachingConnectionFactory connectionFactory = new CachingConnectionFactory("rabbitmq");
-        //CachingConnectionFactory connectionFactory = new CachingConnectionFactory("localhost");
-        connectionFactory.setUsername("guest");
-        connectionFactory.setPassword("guest");
-        return connectionFactory;
-    }
-
-    @Bean
-    public RabbitTemplate rabbitTemplate() {
-        RabbitTemplate rabbitTemplate = new RabbitTemplate();
-        rabbitTemplate.setConnectionFactory(connectionFactory());
-        rabbitTemplate.setMessageConverter(jackson2JsonMessageConverter());
-        return rabbitTemplate;
-    }
-
-    @Bean
-    public Jackson2JsonMessageConverter jackson2JsonMessageConverter() {
-        return new Jackson2JsonMessageConverter();
-    }
-
-    @Bean
-    public Binding bindingUserCreated(Queue userCreatedQueue, TopicExchange userEventExchange) {
-        return BindingBuilder.bind(userCreatedQueue).to(userEventExchange).with("user.created");
-    }
-}*/
