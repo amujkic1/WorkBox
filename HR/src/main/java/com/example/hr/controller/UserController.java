@@ -51,7 +51,7 @@ public class UserController {
         this.requestRepository = requestRepository;
     }
 
-    @GetMapping
+    @GetMapping("/users")
     @Operation(summary = "Retreive all users", description = "Returns a list of all users")
     public CollectionModel<EntityModel<UserDTO>> all(){
         List<EntityModel<UserDTO>> users = userRepository.findAll().stream()
