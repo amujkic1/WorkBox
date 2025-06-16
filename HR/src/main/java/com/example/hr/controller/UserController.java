@@ -7,6 +7,7 @@ import com.example.hr.model.Opening;
 import com.example.hr.model.Request;
 import com.example.hr.model.User;
 import com.example.hr.repository.OpeningRepository;
+import com.example.hr.repository.RecordRepository;
 import com.example.hr.repository.RequestRepository;
 import com.example.hr.repository.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,8 +32,11 @@ import java.util.stream.Collectors;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import com.example.hr.model.Record;
+
 @RestController
 @Tag(name="UserController", description = "API for user management")
+@RequestMapping("/users")
 public class UserController {
 
     private final UserRepository userRepository;
@@ -40,18 +44,20 @@ public class UserController {
     private final UserModelAssembler userModelAssembler;
     private final OpeningRepository openingRepository;
     private final RequestRepository requestRepository;
+    private final RecordRepository recordRepository;
 
     public UserController(UserRepository userRepository, ModelMapper modelMapper,
                           UserModelAssembler userModelAssembler, OpeningRepository openingRepository,
-                            RequestRepository requestRepository) {
+                            RequestRepository requestRepository, RecordRepository recordRepository) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
         this.userModelAssembler = userModelAssembler;
         this.openingRepository = openingRepository;
         this.requestRepository = requestRepository;
+        this.recordRepository = recordRepository;
     }
 
-    @GetMapping("/users")
+    @GetMapping
     @Operation(summary = "Retreive all users", description = "Returns a list of all users")
     public CollectionModel<EntityModel<UserDTO>> all(){
         List<EntityModel<UserDTO>> users = userRepository.findAll().stream()
@@ -113,6 +119,14 @@ public class UserController {
         }
 
         User user = userOptional.get();
+
+        if (user.getRecord() != null) {
+            Record record = user.getRecord();
+            user.setRecord(null);       // raskid veze
+            record.setUser(null);
+            recordRepository.delete(record);  // opcionalno – ako želiš automatski obrisati
+        }
+
 
         List<Request> requests = requestRepository.findAllByUser(user);
         requestRepository.deleteAll(requests);

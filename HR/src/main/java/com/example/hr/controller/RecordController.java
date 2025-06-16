@@ -3,6 +3,7 @@ package com.example.hr.controller;
 import com.example.hr.assembler.RecordModelAssembler;
 import com.example.hr.dto.RecordDTO;
 import com.example.hr.exception.RecordNotFoundException;
+import com.example.hr.exception.UserNotFoundException;
 import com.example.hr.model.Record;
 import com.example.hr.model.User;
 import com.example.hr.repository.RecordRepository;
@@ -49,10 +50,24 @@ public class RecordController {
     @Operation(summary = "Retrieve all records", description = "Returns a list of all employee records")
     public CollectionModel<EntityModel<RecordDTO>> all() {
         List<EntityModel<RecordDTO>> records = recordRepository.findAll().stream()
+                .map(record -> {
+                    RecordDTO dto = modelMapper.map(record, RecordDTO.class);
+                    if (record.getUser() != null) {
+                        dto.setUserUuid(record.getUser().getUuid());
+                    }
+                    return recordModelAssembler.toModel(dto);
+                })
+                .collect(Collectors.toList());
+
+        return CollectionModel.of(records, linkTo(methodOn(RecordController.class).all()).withSelfRel());
+    }
+
+    /*    public CollectionModel<EntityModel<RecordDTO>> all() {
+        List<EntityModel<RecordDTO>> records = recordRepository.findAll().stream()
                 .map(record -> recordModelAssembler.toModel(modelMapper.map(record, RecordDTO.class)))
                 .collect(Collectors.toList());
         return CollectionModel.of(records, linkTo(methodOn(RecordController.class).all()).withSelfRel());
-    }
+    }*/
 
     @GetMapping("/records/{id}")
     @Operation(summary = "Retrieve a record by ID", description = "Fetches details of a specific record by its ID")
@@ -63,11 +78,39 @@ public class RecordController {
     public EntityModel<RecordDTO> one(@PathVariable Integer id) {
         Record record = recordRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(id));
+        RecordDTO dto = modelMapper.map(record, RecordDTO.class);
+        if (record.getUser() != null) {
+            dto.setUserUuid(record.getUser().getUuid());
+        }
+        return recordModelAssembler.toModel(dto);
+    }
+    /*public EntityModel<RecordDTO> one(@PathVariable Integer id) {
+        Record record = recordRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException(id));
         RecordDTO recordDTO = modelMapper.map(record, RecordDTO.class);
         return recordModelAssembler.toModel(recordDTO);
+    }*/
+
+    @PostMapping("/records/user/{userId}")
+    public ResponseEntity<?> postRecord(@PathVariable Integer userId, @Valid @RequestBody Record record) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
+        record.setUser(user);
+        user.setRecord(record);
+
+        Record savedRecord = recordRepository.save(record);
+        userRepository.save(user);
+
+        RecordDTO responseDTO = modelMapper.map(savedRecord, RecordDTO.class);
+        EntityModel<RecordDTO> entityModel = recordModelAssembler.toModel(responseDTO);
+        return ResponseEntity
+                .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(entityModel);
     }
 
-    @PostMapping("/records")
+
+/*    @PostMapping("/records")
     public ResponseEntity<?> postRecord(@Valid @RequestBody Record record) {
         Record savedRecord = recordRepository.save(record);
 
@@ -77,7 +120,7 @@ public class RecordController {
         return ResponseEntity
                 .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(entityModel);
-    }
+    }*/
 
     @PutMapping("/records/{id}")
     @Operation(summary = "Update a record", description = "Updates an existing employee record by its ID")
@@ -121,28 +164,7 @@ public class RecordController {
         return ResponseEntity.ok(entityModel);
     }
 
-/*    @Transactional
-    @DeleteMapping("records/{id}")
-    @Operation(summary = "Delete a record", description = "Deletes an employee record by its ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Record deleted"),
-            @ApiResponse(responseCode = "404", description = "Record not found")
-    })
-    public ResponseEntity<?> deleteRecord(@PathVariable Integer id) {
-        Record record = recordRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException(id));
-
-        // Prvo obriši sve korisnike povezane sa Record-om
-        List<User> users = userRepository.findAllByRecord(record);
-        userRepository.deleteAll(users);
-
-        // Sada obriši i Record
-        recordRepository.delete(record);
-
-        return ResponseEntity.ok().body(Collections.singletonMap("message", "Record successfully deleted."));
-    }*/
-
-    @DeleteMapping("records/{id}")
+    /*@DeleteMapping("records/{id}")
     @Operation(summary = "Delete a record", description = "Deletes an employee record by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Request deleted"),
@@ -155,6 +177,20 @@ public class RecordController {
         recordRepository.delete(record);
 
         return ResponseEntity.ok().body(Collections.singletonMap("message", "Record successfully deleted."));
+    }*/
+
+    @DeleteMapping("/records/{id}")
+    public ResponseEntity<?> deleteRecord(@PathVariable Integer id) {
+        Record record = recordRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException(id));
+
+        if (record.getUser() != null) {
+            record.getUser().setRecord(null);
+        }
+
+        recordRepository.delete(record);
+        return ResponseEntity.ok().body(Collections.singletonMap("message", "Record successfully deleted."));
     }
+
 
 }

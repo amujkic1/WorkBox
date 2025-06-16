@@ -49,6 +49,10 @@ public class User {
     //@Email(message = "Email must be valid")
     private String email;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Record record;
+
+
     @ManyToMany
     @JoinTable(
             name = "user_openings",

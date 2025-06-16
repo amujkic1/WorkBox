@@ -48,4 +48,10 @@ public class Record {
 
     @NotNull(message = "Working hours cannot be null")
     private Integer workingHours;
+
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
+
 }
