@@ -9,6 +9,6 @@ import java.util.UUID;
 
 @Repository
 public interface UserRepository extends JpaRepository<User,Integer> {
-    void deleteByUuid(UUID uuid);
-    Optional<User> findByUuid(UUID uuid);
+    void deleteByUserUUID(UUID uuid);
+    Optional<User> findByUserUUID(UUID uuid);
 }

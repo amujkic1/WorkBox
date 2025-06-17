@@ -19,8 +19,8 @@ public class UserRollbackListener {
     @Transactional
     public void handleRollback(UserCreationFailedEvent event) {
         System.out.println("Finance rollback za UUID: " + event.getUuid());
-        userRepository.findByUuid(event.getUuid()).ifPresent(user -> {
-            userRepository.deleteByUuid(event.getUuid());
+        userRepository.findByUserUUID(event.getUuid()).ifPresent(user -> {
+            userRepository.deleteByUserUUID(event.getUuid());
             System.out.println("Obrisan korisnik u finance servisu!");
         });
     }
