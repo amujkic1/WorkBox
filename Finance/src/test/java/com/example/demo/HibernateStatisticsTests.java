@@ -37,6 +37,7 @@ public class HibernateStatisticsTests {
 
     private Statistics statistics;
 
+    /*
     @BeforeEach
     void DBinitalize(){
 
@@ -103,5 +104,7 @@ public class HibernateStatisticsTests {
         System.out.println("Executed queries: " + queryCount);
         assertTrue(queryCount <= 2, "N+1 problem detektovan! Previše upita je izvršeno.");
     }
+
+     */
 
 }

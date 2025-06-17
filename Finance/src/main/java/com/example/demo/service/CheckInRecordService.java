@@ -48,7 +48,7 @@ public class CheckInRecordService {
 
 
 
-
+    // Metoda za generisanje Timesheet report-a
     public List<WorkingHours> calculateWorkingHours(Date startDate, Date endDate) {
         List<CheckInRecord> checkInRecords = checkInRecordRepository.findByCheckInDateBetween(startDate, endDate);
         List<RecordDTO> response = reportService.getAllRecords();
@@ -73,13 +73,14 @@ public class CheckInRecordService {
             }
         }
 
-
+        // Izračunavanje prekovremenih sati
         Integer numberOfDaysBetweenDates = (int) ChronoUnit.DAYS.between(startDate.toInstant(), endDate.toInstant());
         //System.out.println("\n \n Broj dana je:");
         //System.out.println(numberOfDaysBetweenDates);
 
         for (WorkingHours workingHours : workingHoursMap.values()) {
 
+            // Ovdje izmjeniti kod da radi sa UUID - regularni broj sati se treba dobiti prema UUID
             //System.out.println("Za radnika sa ID:"+workingHours.getUserId());
             Integer regularUserWorkingHours  = response.stream()
                     .filter(record -> record.getId().equals(workingHours.getUserId()))

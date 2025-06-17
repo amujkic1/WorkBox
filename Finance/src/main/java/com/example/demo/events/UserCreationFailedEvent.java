@@ -16,4 +16,12 @@ public class UserCreationFailedEvent implements Serializable {
         this.uuid = uuid;
         this.reason = reason;
     }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public String getReason() {
+        return reason;
+    }
 }

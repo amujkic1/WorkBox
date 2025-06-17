@@ -2,8 +2,6 @@ package com.example.demo.service;
 
 import com.example.demo.dto.EmployeeStatus;
 import com.example.demo.dto.RecordDTO;
-import com.example.demo.dto.WorkingHours;
-import com.example.demo.models.CheckInRecord;
 import com.example.demo.models.EmployeeBenefit;
 import com.example.demo.models.User;
 import com.example.demo.repository.CheckInRecordRepository;
@@ -41,7 +39,7 @@ public class ReportService {
         this.employeeBenefitRepository = employeeBenefitRepository;
     }
 
-    // Sinhroni poziv
+    // Sinhroni poziv za dohvatanje broja radnih sati
     public List<RecordDTO> getAllRecords() {
         String url = "http://api-gateway:8080/hr/records";
         //String url = "http://hr/records";
@@ -64,26 +62,32 @@ public class ReportService {
 
 
 
-
-    public List<EmployeeStatus> getEmployeeStatusReport() {
+    // Metoda za generisanje Employee status report
+    public List<EmployeeStatus> generateEmployeeStatusReport() {
         Map<Integer, EmployeeStatus> employeeStatusMap = new HashMap<>();
 
         List<User> users = userService.getAllUsers();
+        List<RecordDTO> records = getAllRecords();
 
 
         for (User user : users) {
             Integer userId = user.getUserId();
+            UUID targetUUID = user.getUserUUID();
 
             List<EmployeeBenefit> benefits = employeeBenefitRepository.findByUser_UserId(userId);
+            RecordDTO userRecord = records.stream()
+                    .filter(record -> targetUUID.equals(record.getUserUuid())) // Ispravljeno poređenje
+                    .findFirst()
+                    .orElse(new RecordDTO());
 
             // Kreiraj EmployeeStatus objekat
             EmployeeStatus status = new EmployeeStatus(
                     userId,
                     user.getFirstName(),
                     user.getLastName(),
-                    "Active",
-                    "Position",
-                    8,
+                    userRecord.getStatus(),
+                    userRecord.getEmploymentDate(),
+                    userRecord.getWorkingHours(),
                     benefits
             );
 
