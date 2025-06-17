@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.controller.assembler.CheckInRecordModelAssembler;
 import com.example.demo.dto.EmployeeStatus;
+import com.example.demo.dto.PayrollDTO;
 import com.example.demo.dto.RecordDTO;
 import com.example.demo.dto.WorkingHours;
 import com.example.demo.exception.CheckInRecordNotFoundException;
@@ -150,6 +151,16 @@ public class CheckInRecordController {
     @GetMapping("/employee_status_report")
     public List<EmployeeStatus> getEmployeeStatusReport(){
         List<EmployeeStatus> response = reportService.generateEmployeeStatusReport();
+        return response;
+    }
+
+
+    @GetMapping("/employees_payroll")
+    public List<PayrollDTO> getEmployeesPayroll(
+            @RequestParam("fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fromDate,
+            @RequestParam("toDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date toDate)
+    {
+        List<PayrollDTO> response = reportService.generateEmployeesPayroll(fromDate, toDate);
         return response;
     }
 
