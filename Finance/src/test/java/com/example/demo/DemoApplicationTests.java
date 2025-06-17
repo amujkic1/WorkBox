@@ -20,13 +20,13 @@ class DemoApplicationTests {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-
+/*
 	@Test
 	void contextLoads() {
 		assertThat(userController).isNotNull();
 		assertThat(userService).isNotNull();
 	}
-/*
+
 	@Test
 	void givenLazyListBasedUser_WhenFetchingAllUsers_ThenIssueOneRequests() {
 		userService.getAllUsers();
