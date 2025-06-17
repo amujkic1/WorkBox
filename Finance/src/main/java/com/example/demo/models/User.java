@@ -22,7 +22,7 @@ public class User {
     private String lastName;
 
     @NotNull(message = "Hourly rate cannot be null)")
-    private Double hourlyRate = 0.0;
+    private Double hourlyRate = 1.0; //Rename u salaryCoefficient
 
     @Column(name="user_UUID")
     private UUID userUUID;

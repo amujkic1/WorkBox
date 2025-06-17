@@ -1,12 +1,14 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.EmployeeStatus;
+import com.example.demo.dto.PayrollDTO;
 import com.example.demo.dto.RecordDTO;
 import com.example.demo.models.EmployeeBenefit;
 import com.example.demo.models.User;
 import com.example.demo.repository.CheckInRecordRepository;
 import com.example.demo.repository.EmployeeBenefitRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.utility.SalaryCalculator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.CollectionModel;
@@ -61,6 +63,28 @@ public class ReportService {
     }
 
 
+    // Sinhroni poziv
+    public List<User> getAllUsersFromAuthService() {
+        String url = "http://api-gateway:8080/api/v1/auth/users";  // URL auth servisa
+
+        ResponseEntity<User[]> responseEntity = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                User[].class // mapira direktno u niz User objekata tvoje lokalne klase User
+        );
+
+        User[] users = responseEntity.getBody();
+
+        if (users != null) {
+            return Arrays.asList(users);
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+
+
 
     // Metoda za generisanje Employee status report
     public List<EmployeeStatus> generateEmployeeStatusReport() {
@@ -99,6 +123,47 @@ public class ReportService {
         return new ArrayList<>(employeeStatusMap.values());
     }
 
+
+    // Metoda za generisanje Employee status report
+    public List<PayrollDTO> generateEmployeesPayroll(Date startDate, Date endDate){
+        List<PayrollDTO> payrollList = new ArrayList<>();
+        SalaryCalculator salaryCalculator = new SalaryCalculator();
+
+        // Dohvati sve korisnike iz auth servisa
+        List<User> users = getAllUsersFromAuthService();
+
+        // Obračun plate za svakog usera
+        for (User user : users) {
+            PayrollDTO payrollDTO = new PayrollDTO();
+
+            // Ovde ide logika obračuna plate, na primer:
+            // Uzmi broj radnih sati za korisnika između startDate i endDate
+            // Izračunaj platu na osnovu hourlyRate i sati
+
+            // Dummy primer:
+            payrollDTO.setId(user.getUserId());
+            payrollDTO.setUuid(user.getUserUUID());
+            payrollDTO.setFirstName(user.getFirstName());
+            payrollDTO.setLastName(user.getLastName());
+            payrollDTO.setStatus("Aktivan"); //Dodati iz user recorda
+            payrollDTO.setWorkingHours(0); // Dodati iz recorda
+            payrollDTO.setTotalWorkingHours(0); //Dodati
+            payrollDTO.setTotalOvertimeHours(0); // Dodati
+            payrollDTO.setSalary(salaryCalculator.calculateSalary(user.getHourlyRate(),
+                    8,
+                    0,
+                    0,
+                    true,
+                    true,
+                    true,
+                    true));
+            List<EmployeeBenefit> benfiti = null;
+            payrollDTO.setBenefits(benfiti);
+            payrollList.add(payrollDTO);
+        }
+
+        return payrollList;
+    }
 
 
 }
