@@ -147,9 +147,9 @@ public class CheckInRecordController {
     }
 
 
-    @GetMapping("/test2")
-    public List<EmployeeStatus> getTest2(){
-        List<EmployeeStatus> response = reportService.getEmployeeStatusReport();
+    @GetMapping("/employee_status_report")
+    public List<EmployeeStatus> getEmployeeStatusReport(){
+        List<EmployeeStatus> response = reportService.generateEmployeeStatusReport();
         return response;
     }
 
