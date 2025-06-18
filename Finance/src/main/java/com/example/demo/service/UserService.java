@@ -27,6 +27,16 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public User saveUser(User user) { return userRepository.save(user); }
+    public User saveUser(User user) {
+        Optional<User> existingUser = userRepository.findByUserUUID(user.getUserUUID());
+
+        if (existingUser.isPresent()) {
+            System.out.println("Korisnik već postoji: " + user.getUserUUID());
+            return existingUser.get();
+        }
+
+
+        return userRepository.save(user);
+    }
 
 }
