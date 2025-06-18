@@ -54,5 +54,10 @@ public class TaskService {
         }
         return taskRepository.saveAll(tasks);
     }
+
+    public List<Task> getTasksByProjectId(Integer projectId) {
+        return taskRepository.findByProjectId(projectId);
+    }
+
 }
 
