@@ -145,7 +145,7 @@ public class CheckInRecordController {
             @RequestParam("fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fromDate,
             @RequestParam("toDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date toDate
     ) {
-        return checkInRecordService.calculateWorkingHours(fromDate, toDate);
+        return reportService.calculateWorkingHours(fromDate, toDate);
     }
 
 
