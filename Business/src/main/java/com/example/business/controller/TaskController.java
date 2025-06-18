@@ -138,4 +138,20 @@ public class TaskController {
                     .collect(Collectors.toList());
             return CollectionModel.of(newTasks, linkTo(methodOn(TaskController.class).all()).withSelfRel());
     }
+
+    @GetMapping("/project/{projectId}")
+    public ResponseEntity<?> getTasksByProject(@PathVariable Integer projectId) {
+        List<Task> tasks = taskService.getTasksByProjectId(projectId);
+        if (tasks.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        List<EntityModel<Task>> taskModels = tasks.stream()
+                .map(taskModelAssembler::toModel)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(CollectionModel.of(taskModels,
+                linkTo(methodOn(TaskController.class).getTasksByProject(projectId)).withSelfRel()));
+    }
+
+
+
 }
