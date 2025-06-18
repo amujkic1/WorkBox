@@ -1,4 +1,4 @@
-package com.example.hr.clrunner;
+/*package com.example.hr.clrunner;
 
 import com.example.hr.model.Record;
 import com.example.hr.repository.RecordRepository;
@@ -66,4 +66,4 @@ public class RecordRepositoryCommandLineRunner implements CommandLineRunner {
 
     }
 
-}
+}*/
