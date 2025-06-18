@@ -35,7 +35,7 @@ public class Opening {
     private String benefits;
 
     @NotNull(message = "Start date cannot be null")
-    @PastOrPresent(message = "Start date must be in the past or present")
+    //@PastOrPresent(message = "Start date must be in the past or present")
     private Date startDate;
 
     @NotNull(message = "End date cannot be null")

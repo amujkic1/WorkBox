@@ -1,16 +1,20 @@
 package com.example.hr.controller;
 
 import com.example.hr.assembler.RequestModelAssembler;
+import com.example.hr.dto.ApplicationDTO;
 import com.example.hr.dto.RequestDTO;
-import com.example.hr.exception.RecordNotFoundException;
-import com.example.hr.exception.RequestNotFoundException;
-import com.example.hr.exception.UserNotFoundException;
+import com.example.hr.exception.*;
+import com.example.hr.model.*;
 import com.example.hr.model.Record;
-import com.example.hr.model.Request;
-import com.example.hr.model.User;
 import com.example.hr.repository.RecordRepository;
 import com.example.hr.repository.RequestRepository;
 import com.example.hr.repository.UserRepository;
+import com.example.hr.service.RequestService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.JsonPatchException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -36,24 +40,32 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class RequestController {
 
     private final RequestRepository requestRepository;
+    private final RequestService requestService;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
     private final RequestModelAssembler requestModelAssembler;
 
-    public RequestController(RequestRepository requestRepository, UserRepository userRepository,
+    public RequestController(RequestRepository requestRepository, RequestService requestService, UserRepository userRepository,
                              ModelMapper modelMapper, RequestModelAssembler requestModelAssembler) {
         this.requestRepository = requestRepository;
+        this.requestService = requestService;
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
         this.requestModelAssembler = requestModelAssembler;
     }
 
     @GetMapping("/requests")
-    @Operation(summary = "Retrieve all requests", description = "Returns a list of all employee requests")
     public CollectionModel<EntityModel<RequestDTO>> all() {
         List<EntityModel<RequestDTO>> requests = requestRepository.findAll().stream()
-                .map(request -> requestModelAssembler.toModel(modelMapper.map(request, RequestDTO.class)))
+                .map(request -> {
+                    RequestDTO dto = modelMapper.map(request, RequestDTO.class);
+                    if (request.getUser() != null) {
+                        dto.setUserId(request.getUser().getId());
+                    }
+                    return requestModelAssembler.toModel(dto);
+                })
                 .collect(Collectors.toList());
+
         return CollectionModel.of(requests, linkTo(methodOn(RequestController.class).all()).withSelfRel());
     }
 
@@ -140,5 +152,45 @@ public class RequestController {
 
         return ResponseEntity.ok().body(Collections.singletonMap("message", "Request successfully deleted."));
     }
+
+    @PatchMapping(path = "/requests/{id}", consumes = "application/json-patch+json")
+    @Operation(summary = "Partially update a request", description = "Applies a JSON Patch to a request")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Request patched"),
+            @ApiResponse(responseCode = "404", description = "Request not found"),
+            @ApiResponse(responseCode = "500", description = "Patch processing failed")
+    })
+    public ResponseEntity<?> updateRequest(@PathVariable Integer id, @RequestBody JsonPatch patch) {
+        try {
+            Request request = requestRepository.findById(id)
+                    .orElseThrow(() -> new RequestNotFoundException(id));
+            RequestDTO requestDTO = modelMapper.map(request, RequestDTO.class);
+
+            RequestDTO patchedDTO = applyPatchToDTO(patch, requestDTO);
+
+            User user = userRepository.findById(patchedDTO.getUserId())
+                    .orElseThrow(() -> new UserNotFoundException(patchedDTO.getUserId()));
+
+            modelMapper.map(patchedDTO, request);
+            request.setUser(user);
+
+            Request savedRequest = requestService.update(request);
+
+            RequestDTO savedDTO = modelMapper.map(savedRequest, RequestDTO.class);
+
+            EntityModel<RequestDTO> entityModel = requestModelAssembler.toModel(savedDTO);
+            return ResponseEntity.ok(entityModel);
+
+        } catch (JsonPatchException | JsonProcessingException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Patch error: " + e.getMessage());
+        }
+    }
+
+    private RequestDTO applyPatchToDTO(JsonPatch patch, RequestDTO targetDTO) throws JsonPatchException, JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode patched = patch.apply(objectMapper.convertValue(targetDTO, JsonNode.class));
+        return objectMapper.treeToValue(patched, RequestDTO.class);
+    }
+
 
 }

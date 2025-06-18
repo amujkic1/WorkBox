@@ -206,5 +206,4 @@ public class ApplicationController {
         return CollectionModel.of(applications, linkTo(methodOn(ApplicationController.class).getApplicationsSortedByPoints()).withSelfRel());
     }
 
-
 }
