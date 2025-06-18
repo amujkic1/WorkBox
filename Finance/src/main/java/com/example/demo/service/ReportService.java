@@ -3,6 +3,8 @@ package com.example.demo.service;
 import com.example.demo.dto.EmployeeStatus;
 import com.example.demo.dto.PayrollDTO;
 import com.example.demo.dto.RecordDTO;
+import com.example.demo.dto.WorkingHours;
+import com.example.demo.models.CheckInRecord;
 import com.example.demo.models.EmployeeBenefit;
 import com.example.demo.models.User;
 import com.example.demo.repository.CheckInRecordRepository;
@@ -21,6 +23,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -101,9 +105,6 @@ public class ReportService {
 
 
 
-
-
-
     // Metoda za generisanje Employee status report
     public List<EmployeeStatus> generateEmployeeStatusReport() {
         Map<Integer, EmployeeStatus> employeeStatusMap = new HashMap<>();
@@ -125,13 +126,14 @@ public class ReportService {
             // Kreiraj EmployeeStatus objekat
             EmployeeStatus status = new EmployeeStatus(
                     userId,
+                    userRecord.getUserUuid(),
                     user.getFirstName(),
                     user.getLastName(),
                     userRecord.getStatus(),
                     userRecord.getEmploymentDate(),
                     userRecord.getWorkingHours(),
                     benefits
-            );
+                    );
 
             // Stavi ga u mapu (userId kao ključ)
             employeeStatusMap.put(userId, status);
@@ -143,45 +145,150 @@ public class ReportService {
 
 
     // Metoda za generisanje Employee payroll
+
     public List<PayrollDTO> generateEmployeesPayroll(Date startDate, Date endDate){
         List<PayrollDTO> payrollList = new ArrayList<>();
         SalaryCalculator salaryCalculator = new SalaryCalculator();
+        Integer numberOfDaysBetweenDates = (int) ChronoUnit.DAYS.between(startDate.toInstant(), endDate.toInstant());
 
-        // Dohvati sve korisnike iz auth servisa
+
+        // Dohvatanje svih korisnika iz Auth servisa
         List<User> users = getAllUsersFromAuthService();
+        List<EmployeeStatus> employeeStatusList = generateEmployeeStatusReport();
+        List<WorkingHours> timesheetList = calculateWorkingHours(startDate, endDate);
+
 
         // Obračun plate za svakog usera
         for (User user : users) {
+
+            EmployeeStatus userStatus = employeeStatusList.stream()
+                    .filter(employeeStatus -> employeeStatus.getUuid().equals(user.getUserUUID()))
+                    .findFirst()
+                    .orElse(new EmployeeStatus());
+
+            if (userStatus.getUuid() == null) {
+                continue;
+            }
+
+            WorkingHours userWorkingHours = timesheetList.stream()
+                    .filter(workingHours -> workingHours.getUuid().equals(user.getUserUUID()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (userWorkingHours == null) {
+                continue;
+            }
+
+
             PayrollDTO payrollDTO = new PayrollDTO();
-
-            // Ovde ide logika obračuna plate, na primer:
-            // Uzmi broj radnih sati za korisnika između startDate i endDate
-            // Izračunaj platu na osnovu hourlyRate i sati
-
-            // Dummy primer:
             payrollDTO.setId(user.getUserId());
             payrollDTO.setUuid(user.getUserUUID());
             payrollDTO.setFirstName(user.getFirstName());
             payrollDTO.setLastName(user.getLastName());
-            payrollDTO.setStatus("Aktivan"); //Dodati iz user recorda
-            payrollDTO.setWorkingHours(0); // Dodati iz recorda
-            payrollDTO.setTotalWorkingHours(0); //Dodati
-            payrollDTO.setTotalOvertimeHours(0); // Dodati
+
+            payrollDTO.setStatus(userStatus.getStatus());
+            payrollDTO.setWorkingHours(userStatus.getNumberOfWorkingHours());
+            payrollDTO.setBenefits(userStatus.getEmployeeBenefits());
+
+            payrollDTO.setTotalWorkingHours(userWorkingHours.getTotalWorkingHours());
+            payrollDTO.setTotalOvertimeHours(userWorkingHours.getTotalOvertimeHours());
+
+
+            boolean[] benefitsTMP = new boolean[4];
+
+            if (userStatus.getEmployeeBenefits() != null) {
+                for (EmployeeBenefit benefit : userStatus.getEmployeeBenefits()) {
+                    if ("Bonus".equalsIgnoreCase(benefit.getType())){
+                        benefitsTMP[0] = true;
+                    }
+
+                    if ("Transport".equalsIgnoreCase(benefit.getType())){
+                        benefitsTMP[1] = true;
+                    }
+
+                    if ("Meal".equalsIgnoreCase(benefit.getType())){
+                        benefitsTMP[2] = true;
+                    }
+
+                    if ("Other".equalsIgnoreCase(benefit.getType())){
+                        benefitsTMP[3] = true;
+                    }
+                }
+
+            }
+
             payrollDTO.setSalary(salaryCalculator.calculateSalary(user.getHourlyRate(),
-                    8,
-                    0,
-                    0,
-                    true,
-                    true,
-                    true,
-                    true));
-            List<EmployeeBenefit> benfiti = null;
-            payrollDTO.setBenefits(benfiti);
+                    numberOfDaysBetweenDates,
+                    userWorkingHours.getTotalWorkingHours(),
+                    userWorkingHours.getTotalOvertimeHours(),
+                    benefitsTMP[0],
+                    benefitsTMP[1],
+                    benefitsTMP[2],
+                    benefitsTMP[3]));
+
             payrollList.add(payrollDTO);
         }
 
         return payrollList;
     }
+
+
+
+
+    // Metoda za generisanje Timesheet report-a
+    public List<WorkingHours> calculateWorkingHours(Date startDate, Date endDate) {
+        List<CheckInRecord> checkInRecords = checkInRecordRepository.findByCheckInDateBetween(startDate, endDate);
+        List<RecordDTO> response = getAllRecords();
+
+        Map<Integer, WorkingHours> workingHoursMap = new HashMap<>();
+
+
+        for (CheckInRecord record : checkInRecords) {
+            Duration duration = Duration.between(record.getCheckInTime().toLocalTime(), record.getCheckOutTime().toLocalTime());
+            Integer hoursWorked = (int) duration.toHours();
+            Integer userId = record.getUser().getUserId();
+            UUID userUUID = record.getUser().getUserUUID();
+
+
+            if (workingHoursMap.containsKey(userId)) {
+                WorkingHours existing = workingHoursMap.get(userId);
+                existing.setTotalWorkingHours(existing.getTotalWorkingHours() + hoursWorked);
+            } else {
+                workingHoursMap.put(userId, new WorkingHours(userId,
+                        userUUID,
+                        record.getUser().getFirstName(),
+                        record.getUser().getLastName(),
+                        hoursWorked));
+            }
+        }
+
+
+        // Izračunavanje prekovremenih sati
+        Integer numberOfDaysBetweenDates = (int) ChronoUnit.DAYS.between(startDate.toInstant(), endDate.toInstant());
+        //System.out.println("\n \n Broj dana je:");
+        //System.out.println(numberOfDaysBetweenDates);
+
+        for (WorkingHours workingHours : workingHoursMap.values()) {
+
+            // Ovdje izmjeniti kod da radi sa UUID - regularni broj sati se treba dobiti prema UUID
+            //System.out.println("Za radnika sa ID:"+workingHours.getUserId());
+            //.filter(record -> record.getId().equals(workingHours.getUserId()))
+            Integer regularUserWorkingHours  = response.stream()
+                    .filter(record -> record.getUserUuid().equals(workingHours.getUuid()))
+                    .map(RecordDTO::getWorkingHours)
+                    .findFirst()
+                    .orElse(null);
+            Integer overtimeHours = Math.max(0, workingHours.getTotalWorkingHours() - (regularUserWorkingHours * numberOfDaysBetweenDates));
+            //System.out.println("RegularUserWorkingHours:"+regularUserWorkingHours);
+            //System.out.println("Number of days:"+numberOfDaysBetweenDates);
+            //System.out.println("Razlika:"+(workingHours.getTotalWorkingHours() - (regularUserWorkingHours * numberOfDaysBetweenDates)));
+            //System.out.println("\n");
+            workingHours.setTotalOvertimeHours(overtimeHours);
+        }
+
+        return new ArrayList<WorkingHours>(workingHoursMap.values());
+    }
+
 
 
 }
