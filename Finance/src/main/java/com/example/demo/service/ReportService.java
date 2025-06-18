@@ -9,10 +9,13 @@ import com.example.demo.repository.CheckInRecordRepository;
 import com.example.demo.repository.EmployeeBenefitRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.utility.SalaryCalculator;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,6 +33,9 @@ public class ReportService {
     private final EmployeeBenefitService employeeBenefitService;
     private final UserService userService;
     private final EmployeeBenefitRepository employeeBenefitRepository;
+
+    @Autowired
+    private HttpServletRequest request;
 
     @Autowired
     public ReportService(RestTemplate restTemplate, CheckInRecordRepository checkInRecordRepository, UserRepository userRepository, EmployeeBenefitService employeeBenefitService, UserService userService, EmployeeBenefitRepository employeeBenefitRepository) {
@@ -65,23 +71,35 @@ public class ReportService {
 
     // Sinhroni poziv
     public List<User> getAllUsersFromAuthService() {
-        String url = "http://api-gateway:8080/api/v1/auth/users";  // URL auth servisa
+        String url = "http://api-gateway:8080/auth/users";
+
+        // Dohvatanje tokena iz Authorization headera
+        String jwtToken = null;
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            jwtToken = authHeader.substring(7);
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        if (jwtToken != null && !jwtToken.isBlank()) {
+            headers.set("Authorization", "Bearer " + jwtToken);
+        }
+
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
 
         ResponseEntity<User[]> responseEntity = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
-                null,
-                User[].class // mapira direktno u niz User objekata tvoje lokalne klase User
+                entity,
+                User[].class
         );
 
         User[] users = responseEntity.getBody();
-
-        if (users != null) {
-            return Arrays.asList(users);
-        } else {
-            return Collections.emptyList();
-        }
+        return users != null ? Arrays.asList(users) : Collections.emptyList();
     }
+
+
 
 
 
@@ -124,7 +142,7 @@ public class ReportService {
     }
 
 
-    // Metoda za generisanje Employee status report
+    // Metoda za generisanje Employee payroll
     public List<PayrollDTO> generateEmployeesPayroll(Date startDate, Date endDate){
         List<PayrollDTO> payrollList = new ArrayList<>();
         SalaryCalculator salaryCalculator = new SalaryCalculator();
