@@ -7,6 +7,7 @@ import com.example.demo.dto.RecordDTO;
 import com.example.demo.dto.WorkingHours;
 import com.example.demo.exception.CheckInRecordNotFoundException;
 import com.example.demo.models.CheckInRecord;
+import com.example.demo.models.User;
 import com.example.demo.repository.CheckInRecordRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.CheckInRecordService;
@@ -163,6 +164,13 @@ public class CheckInRecordController {
         List<PayrollDTO> response = reportService.generateEmployeesPayroll(fromDate, toDate);
         return response;
     }
+
+    @GetMapping("/test3")
+    public List<User> getTest3(){
+        List<User> response = reportService.getAllUsersFromAuthService();
+        return response;
+    }
+
 
 
 
