@@ -23,6 +23,8 @@ public class UserEventProducer {
         String routingKey = determineRoutingKey(Role.valueOf(event.getRole()));
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.USER_EVENT_EXCHANGE, routingKey, event);
+        rabbitTemplate.convertAndSend(RabbitMQConfig.USER_EVENT_EXCHANGE, "finance.manager.user.created", event);
+        rabbitTemplate.convertAndSend(RabbitMQConfig.USER_EVENT_EXCHANGE, "hr.user.created", event);
     }
 
     private String determineRoutingKey(Role role) {
