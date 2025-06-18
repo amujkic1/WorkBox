@@ -49,9 +49,9 @@ public class User {
     //@Email(message = "Email must be valid")
     private String email;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "record_id", referencedColumnName = "id")
     private Record record;
-
 
     @ManyToMany
     @JoinTable(

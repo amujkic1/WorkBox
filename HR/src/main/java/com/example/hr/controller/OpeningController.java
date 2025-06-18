@@ -52,12 +52,25 @@ public class OpeningController {
         this.applicationRepository = applicationRepository;
     }
 
-    @GetMapping("/openings")
+    /*@GetMapping("/openings")
     @Operation(summary = "Retrieve all openings", description = "Returns a list of all job openings")
-    public CollectionModel<EntityModel<OpeningDTO>> all(){
+    public CollectionModel<EntityModel<OpeningDTO>> all() {
         List<EntityModel<OpeningDTO>> openings = openingRepository.findAll().stream()
                 .map(opening -> openingModelAssembler.toModel(modelMapper.map(opening, OpeningDTO.class)))
                 .collect(Collectors.toList());
+        return CollectionModel.of(openings, linkTo(methodOn(ApplicationController.class).all()).withSelfRel());
+    }*/
+
+    @GetMapping("/openings")
+    @Operation(summary = "Retrieve all openings", description = "Returns a list of all job openings")
+    public CollectionModel<EntityModel<OpeningDTO>> all() {
+        List<EntityModel<OpeningDTO>> openings = openingRepository.findAll().stream()
+            .map(opening -> {
+                OpeningDTO dto = modelMapper.map(opening, OpeningDTO.class);
+                dto.setApplicationCount((Integer) opening.getApplications().size()); // ručno dodaj broj aplikacija
+                return openingModelAssembler.toModel(dto);
+            })
+            .collect(Collectors.toList());
         return CollectionModel.of(openings, linkTo(methodOn(ApplicationController.class).all()).withSelfRel());
     }
 

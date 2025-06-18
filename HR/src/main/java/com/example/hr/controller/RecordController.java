@@ -192,5 +192,30 @@ public class RecordController {
         return ResponseEntity.ok().body(Collections.singletonMap("message", "Record successfully deleted."));
     }
 
+    @GetMapping("/records_by_status")
+    public CollectionModel<EntityModel<RecordDTO>> getRecords(@RequestParam(required = false) String status) {
+        List<Record> records;
+
+        if (status != null) {
+            records = recordRepository.findByStatus(status);
+        } else {
+            records = recordRepository.findAll();
+        }
+
+        List<EntityModel<RecordDTO>> recordModels = records.stream()
+                .map(record -> {
+                    RecordDTO dto = modelMapper.map(record, RecordDTO.class);
+                    if (record.getUser() != null) {
+                        dto.setUserUuid(record.getUser().getUuid());
+                    }
+                    return recordModelAssembler.toModel(dto);
+                })
+                .collect(Collectors.toList());
+
+        return CollectionModel.of(recordModels,
+                linkTo(methodOn(RecordController.class).getRecords(status)).withSelfRel());
+    }
+
+
 
 }

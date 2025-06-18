@@ -49,9 +49,7 @@ public class Record {
     @NotNull(message = "Working hours cannot be null")
     private Integer workingHours;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @OneToOne(mappedBy = "record", fetch = FetchType.LAZY)
     private User user;
-
 
 }

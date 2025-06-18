@@ -30,6 +30,17 @@ public class RequestRepositoryCommandLineRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
         List<User> users = userRepository.findAll();
 
+        if (users.isEmpty()) {
+            log.warn("Nema korisnika u bazi!");
+        } else {
+            log.info("Pronađeni korisnici:");
+            for (int i = 0; i < users.size(); i++) {
+                User user = users.get(i);
+                log.info("Korisnik {}: id={}, ime={}, username={}, email={}", i, user.getId(), user.getFirstName(), user.getUsername(), user.getEmail());
+            }
+        }
+
+
         Request request1 = Request.builder()
                 .type("Leave")
                 .text("Tražim odmor od 10 dana.")
