@@ -22,8 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -217,5 +216,56 @@ public class RecordController {
     }
 
 
+
+
+    @PostMapping("/create_empty_record/{uuid}")
+    public ResponseEntity<?> createEmptyRecordForUser(@PathVariable String uuid) {
+        System.out.println("\n\n ################# Kreiranje empty record###############");
+        // 1. Pronadji korisnika po UUID-u
+        List<User> tmp = userRepository.findAll();
+        for (User u: tmp){
+            System.out.println("User :");
+            System.out.println(u.getFirstName());
+            System.out.println("\n");
+        }
+        System.out.println("----------------------------------------------\n\n");
+        Optional<User> userOpt = userRepository.findByUuid(UUID.fromString(uuid));
+
+        // 2. Ako korisnik ne postoji, vrati grešku
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        User user = userOpt.get();
+        System.out.println("Ussr");
+        System.out.println(user);
+
+        // 3. Proveri da li korisnik već ima povezani Record
+        if (user.getRecord() != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Record already exists for user");
+        }
+
+
+
+        // 4. Napravi prazan Record
+        Record record = Record.builder()
+                .jmbg(1234567890123L)
+                .birthDate(new Date())
+                .contactNumber("+38761234567")
+                .address("Adresa 1")
+                .email("email1@example.com")
+                .employmentDate(new Date())
+                .status("Active")
+                .workingHours(8)
+                .user(user)
+                .build();
+
+        System.out.println("Record se sprema u bazu "+record.getUser());
+        recordRepository.save(record);
+        user.setRecord(record);
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Empty record created");
+    }
 
 }
