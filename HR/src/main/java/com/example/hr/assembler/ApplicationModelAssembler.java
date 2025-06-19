@@ -21,15 +21,3 @@ public class ApplicationModelAssembler implements RepresentationModelAssembler<A
                 linkTo(methodOn(ApplicationController.class).all()).withRel("applications"));
     }
 }
-
-/*@Component
-public class ApplicationModelAssembler implements RepresentationModelAssembler<Application, EntityModel<Application>> {
-
-    @Override
-    public EntityModel<Application> toModel(Application application) {
-
-        return EntityModel.of(application,
-                linkTo(methodOn(ApplicationController.class).one(application.getId())).withSelfRel(),
-                linkTo(methodOn(ApplicationController.class).all()).withRel("applications"));
-    }
-}*/

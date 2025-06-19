@@ -21,7 +21,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public long insert(User user) {
+    public Integer insert(User user) {
         entityManager.persist(user);
         return user.getId();
     }

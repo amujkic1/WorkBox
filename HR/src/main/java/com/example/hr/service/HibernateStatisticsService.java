@@ -20,6 +20,5 @@ public class HibernateStatisticsService {
         Statistics stats = sessionFactory.getStatistics();
         //stats.logSummary();
         //stats.get
-        //iskoristiti u testu npr ako koristiš fju
     }
 }
