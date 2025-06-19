@@ -190,4 +190,49 @@ public class RecordController {
                 linkTo(methodOn(RecordController.class).getRecords(status)).withSelfRel());
     }
 
+    @PatchMapping("/records/{id}")
+    @Operation(summary = "Partially update a record", description = "Partially updates an employee record by its ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Record updated"),
+            @ApiResponse(responseCode = "404", description = "Record not found")
+    })
+    @Transactional
+    public ResponseEntity<?> patchRecord(@PathVariable Integer id, @RequestBody Record partialRecord) {
+        Record existingRecord = recordRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException(id));
+
+        if (partialRecord.getJmbg() != null) {
+            existingRecord.setJmbg(partialRecord.getJmbg());
+        }
+        if (partialRecord.getBirthDate() != null) {
+            existingRecord.setBirthDate(partialRecord.getBirthDate());
+        }
+        if (partialRecord.getContactNumber() != null) {
+            existingRecord.setContactNumber(partialRecord.getContactNumber());
+        }
+        if (partialRecord.getAddress() != null) {
+            existingRecord.setAddress(partialRecord.getAddress());
+        }
+        if (partialRecord.getEmail() != null) {
+            existingRecord.setEmail(partialRecord.getEmail());
+        }
+        if (partialRecord.getEmploymentDate() != null) {
+            existingRecord.setEmploymentDate(partialRecord.getEmploymentDate());
+        }
+        if (partialRecord.getStatus() != null) {
+            existingRecord.setStatus(partialRecord.getStatus());
+        }
+        if (partialRecord.getWorkingHours() != null) {
+            existingRecord.setWorkingHours(partialRecord.getWorkingHours());
+        }
+
+        Record updatedRecord = recordRepository.save(existingRecord);
+        RecordDTO updatedDTO = modelMapper.map(updatedRecord, RecordDTO.class);
+        if (updatedRecord.getUser() != null) {
+            updatedDTO.setUserUuid(updatedRecord.getUser().getUuid());
+        }
+
+        return ResponseEntity.ok(recordModelAssembler.toModel(updatedDTO));
+    }
+
 }

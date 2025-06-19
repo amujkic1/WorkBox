@@ -31,6 +31,75 @@ public class RequestRepositoryCommandLineRunner implements CommandLineRunner {
         List<User> users = userRepository.findAll();
 
         if (users.isEmpty()) {
+            log.warn("No users found in the database!");
+            return;
+        } else {
+            log.info("Found users:");
+            for (int i = 0; i < users.size(); i++) {
+                User user = users.get(i);
+                log.info("User {}: id={}, name={} {}, username={}, email={}",
+                        i + 1, user.getId(), user.getFirstName(), user.getLastName(), user.getUsername(), user.getEmail());
+            }
+        }
+
+        // Representative demo requests
+        Request req1 = Request.builder()
+                .type("Annual Leave")
+                .text("I would like to take annual leave from July 1st to July 10th.")
+                .date(new Date())
+                .status("Pending")
+                .user(users.get(0))
+                .build();
+
+        Request req2 = Request.builder()
+                .type("Remote Work")
+                .text("Requesting remote work for next Monday and Tuesday due to personal reasons.")
+                .date(new Date())
+                .status("Approved")
+                .user(users.get(1))
+                .build();
+
+        Request req3 = Request.builder()
+                .type("Salary Raise")
+                .text("Based on my performance and additional responsibilities, I request a salary raise.")
+                .date(new Date())
+                .status("Pending")
+                .user(users.get(2))
+                .build();
+
+        Request req4 = Request.builder()
+                .type("New Equipment")
+                .text("Please provide a new laptop as the current one is malfunctioning.")
+                .date(new Date())
+                .status("Rejected")
+                .user(users.get(0))
+                .build();
+
+        Request req5 = Request.builder()
+                .type("Training Request")
+                .text("I would like to attend the upcoming AWS cloud training to improve my skills.")
+                .date(new Date())
+                .status("Approved")
+                .user(users.get(1))
+                .build();
+
+        Request req6 = Request.builder()
+                .type("Schedule Adjustment")
+                .text("I am requesting a shift adjustment for next week due to family obligations.")
+                .date(new Date())
+                .status("Pending")
+                .user(users.get(2))
+                .build();
+
+        // Save all requests
+        requestRepository.saveAll(List.of(req1, req2, req3, req4, req5, req6));
+        log.info("6 demo Requests successfully inserted into the database.");
+    }
+
+    /*public void run(String... args) throws Exception {
+        List<User> users = userRepository.findAll();
+
+        if (users.isEmpty()) {
             log.warn("Nema korisnika u bazi!");
         } else {
             log.info("Pronađeni korisnici:");
@@ -80,5 +149,5 @@ public class RequestRepositoryCommandLineRunner implements CommandLineRunner {
 
         log.info("Requests uneseni u bazu!");
 
-    }
+    }*/
 }
