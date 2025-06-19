@@ -1,7 +1,10 @@
 package com.example.demo.dto;
 
+import java.util.UUID;
+
 public class WorkingHours {
     private Integer userId;
+    private UUID uuid;
     private String firstName;
     private String lastName;
     private Integer totalWorkingHours;
@@ -11,6 +14,14 @@ public class WorkingHours {
     //private Map<Date, Integer> dailyWorkMap = new HashMap<>();
 
 
+    public WorkingHours(Integer userId, UUID uuid, String firstName, String lastName, Integer totalWorkingHours) {
+        this.userId = userId;
+        this.uuid = uuid;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.totalWorkingHours = totalWorkingHours;
+    }
+/*
     public WorkingHours(Integer userId, String firstName, String lastName, Integer totalWorkingHours) {
         this.userId = userId;
         this.firstName = firstName;
@@ -18,6 +29,8 @@ public class WorkingHours {
         this.totalWorkingHours = totalWorkingHours;
 
     }
+
+ */
 
 
     public Integer getUserId() {
@@ -58,5 +71,13 @@ public class WorkingHours {
 
     public void setTotalOvertimeHours(Integer overtimeHours) {
         this.totalOvertimeHours = overtimeHours;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
     }
 }

@@ -4,9 +4,11 @@ import com.example.demo.models.EmployeeBenefit;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class EmployeeStatus {
     private Integer id;
+    private UUID uuid;
     private String firstName;
     private String lastName;
     private String status;
@@ -14,8 +16,11 @@ public class EmployeeStatus {
     private Integer numberOfWorkingHours;
     private List<EmployeeBenefit> employeeBenefits;
 
-    public EmployeeStatus(Integer id, String firstName, String lastName, String status, Date employmentDate, Integer numberOfWorkingHours, List<EmployeeBenefit> employeeBenefits) {
+    public EmployeeStatus() {}
+
+    public EmployeeStatus(Integer id, UUID uuid, String firstName, String lastName, String status, Date employmentDate, Integer numberOfWorkingHours, List<EmployeeBenefit> employeeBenefits) {
         this.id = id;
+        this.uuid = uuid;
         this.firstName = firstName;
         this.lastName = lastName;
         this.status = status;
@@ -78,5 +83,13 @@ public class EmployeeStatus {
 
     public void setEmploymentDate(Date employmentDate) {
         this.employmentDate = employmentDate;
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
     }
 }

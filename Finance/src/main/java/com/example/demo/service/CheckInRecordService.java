@@ -17,8 +17,8 @@ public class CheckInRecordService {
     @Autowired
     private CheckInRecordRepository checkInRecordRepository;
 
-    @Autowired
-    private ReportService reportService;
+    //@Autowired
+    //private ReportService reportService;
 
 
     public Optional<CheckInRecord> getCheckInRecordById(Integer id){
@@ -49,7 +49,7 @@ public class CheckInRecordService {
 
 
     // Metoda za generisanje Timesheet report-a
-    public List<WorkingHours> calculateWorkingHours(Date startDate, Date endDate) {
+    /*public List<WorkingHours> calculateWorkingHours(Date startDate, Date endDate) {
         List<CheckInRecord> checkInRecords = checkInRecordRepository.findByCheckInDateBetween(startDate, endDate);
         List<RecordDTO> response = reportService.getAllRecords();
 
@@ -60,6 +60,7 @@ public class CheckInRecordService {
             Duration duration = Duration.between(record.getCheckInTime().toLocalTime(), record.getCheckOutTime().toLocalTime());
             Integer hoursWorked = (int) duration.toHours();
             Integer userId = record.getUser().getUserId();
+            UUID userUUID = record.getUser().getUserUUID();
 
 
             if (workingHoursMap.containsKey(userId)) {
@@ -67,11 +68,13 @@ public class CheckInRecordService {
                 existing.setTotalWorkingHours(existing.getTotalWorkingHours() + hoursWorked);
             } else {
                 workingHoursMap.put(userId, new WorkingHours(userId,
+                        userUUID,
                         record.getUser().getFirstName(),
                         record.getUser().getLastName(),
                         hoursWorked));
             }
         }
+
 
         // Izračunavanje prekovremenih sati
         Integer numberOfDaysBetweenDates = (int) ChronoUnit.DAYS.between(startDate.toInstant(), endDate.toInstant());
@@ -82,8 +85,9 @@ public class CheckInRecordService {
 
             // Ovdje izmjeniti kod da radi sa UUID - regularni broj sati se treba dobiti prema UUID
             //System.out.println("Za radnika sa ID:"+workingHours.getUserId());
+            //.filter(record -> record.getId().equals(workingHours.getUserId()))
             Integer regularUserWorkingHours  = response.stream()
-                    .filter(record -> record.getId().equals(workingHours.getUserId()))
+                    .filter(record -> record.getUserUuid().equals(workingHours.getUuid()))
                     .map(RecordDTO::getWorkingHours)
                     .findFirst()
                     .orElse(null);
@@ -97,5 +101,7 @@ public class CheckInRecordService {
 
         return new ArrayList<WorkingHours>(workingHoursMap.values());
     }
+
+     */
 
 }
