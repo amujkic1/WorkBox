@@ -20,8 +20,8 @@ public class Record {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique = true)
-    @NotNull(message = "JMBG cannot be null")
+    @Column//(unique = true)
+    //@NotNull(message = "JMBG cannot be null")
     private Long jmbg;
 
     @NotNull(message = "Birth date cannot be null")

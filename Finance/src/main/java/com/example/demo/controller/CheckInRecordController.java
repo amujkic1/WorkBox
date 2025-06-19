@@ -202,8 +202,7 @@ public class CheckInRecordController {
 
     @GetMapping("/test")
     public List<RecordDTO> getTest(){
-        List<RecordDTO> response = reportService.getAllRecords();
-        return response;
+        return reportService.getAllRecords();
     }
 
 
@@ -218,8 +217,7 @@ public class CheckInRecordController {
 
     @GetMapping("/employee_status_report")
     public List<EmployeeStatus> getEmployeeStatusReport(){
-        List<EmployeeStatus> response = reportService.generateEmployeeStatusReport();
-        return response;
+        return reportService.generateEmployeeStatusReport();
     }
 
 
@@ -228,14 +226,12 @@ public class CheckInRecordController {
             @RequestParam("fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fromDate,
             @RequestParam("toDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date toDate)
     {
-        List<PayrollDTO> response = reportService.generateEmployeesPayroll(fromDate, toDate);
-        return response;
+        return reportService.generateEmployeesPayroll(fromDate, toDate);
     }
 
     @GetMapping("/test3")
     public List<User> getTest3(){
-        List<User> response = reportService.getAllUsersFromAuthService();
-        return response;
+        return reportService.getAllUsersFromAuthService();
     }
 
 
