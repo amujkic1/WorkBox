@@ -1,4 +1,3 @@
-// ErrorResponse.java
 package com.example.hr.exception;
 
 import lombok.AllArgsConstructor;

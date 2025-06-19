@@ -19,7 +19,6 @@ public class EmployeeBenefitService {
     }
 
     private final String financeServiceUrl = "http://api-gateway:8080/finance/employee_benefit/user/{userId}";
-    //private final String financeServiceUrl = "http://finance-service/employee_benefit/{userId}";
 
     public List<EmployeeBenefitDTO> getEmployeeBenefitsForUser(Integer userId) {
 

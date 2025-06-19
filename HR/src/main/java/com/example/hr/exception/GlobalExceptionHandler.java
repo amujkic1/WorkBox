@@ -13,7 +13,6 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 1. Validacione greške (npr. @NotBlank, @Email)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidationErrors(MethodArgumentNotValidException ex) {
         Map<String, String> messages = new HashMap<>();
@@ -37,21 +36,18 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse("not_found", ex.getMessage()));
     }
 
-    // 3. Loš format ID parametra (npr. /applications/abc)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
         String message = "Nevažeći format ID parametra. Očekivan je broj, ali je primljeno: " + ex.getValue();
         return new ResponseEntity<>(new ErrorResponse("invalid_format", message), HttpStatus.BAD_REQUEST);
     }
 
-    // 4. Missing path variables or request params
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ErrorResponse> handleMissingParam(MissingServletRequestParameterException ex) {
         String message = "Nedostaje obavezni parametar: " + ex.getParameterName();
         return new ResponseEntity<>(new ErrorResponse("missing_parameter", message), HttpStatus.BAD_REQUEST);
     }
 
-    // 5. Svi ostali nepredviđeni izuzeci
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneric(Exception ex) {
         return new ResponseEntity<>(

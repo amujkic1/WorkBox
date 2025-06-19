@@ -32,6 +32,87 @@ public class ApplicationRepositoryCommandLineRunner implements CommandLineRunner
 
     @Override
     public void run(String... args) throws Exception {
+        List<Opening> openings = openingRepository.findAll();
+
+        if (openings.size() < 3) {
+            log.warn("Not enough openings to assign applications. Please ensure at least 3 openings exist.");
+            return;
+        }
+
+        Application app1 = new Application(
+                new Date(),
+                "John", "Doe",
+                "john.doe@example.com",
+                "+38761111222",
+                "https://example.com/cv/johndoe",
+                "Pending",
+                88.5,
+                openings.get(0)
+        );
+
+        Application app2 = new Application(
+                new Date(),
+                "Emily", "Clark",
+                "emily.clark@example.com",
+                "+38762123456",
+                "https://example.com/cv/emilyclark",
+                "Accepted",
+                91.2,
+                openings.get(0)
+        );
+
+        Application app3 = new Application(
+                new Date(),
+                "Michael", "Brown",
+                "michael.brown@example.com",
+                "+38763123456",
+                "https://example.com/cv/michaelbrown",
+                "Rejected",
+                72.0,
+                openings.get(1)
+        );
+
+        Application app4 = new Application(
+                new Date(),
+                "Sara", "Peterson",
+                "sara.peterson@example.com",
+                "+38764123456",
+                "https://example.com/cv/sarapeterson",
+                "Pending",
+                85.0,
+                openings.get(1)
+        );
+
+        Application app5 = new Application(
+                new Date(),
+                "David", "Wilson",
+                "david.wilson@example.com",
+                "+38765123456",
+                "https://example.com/cv/davidwilson",
+                "Pending",
+                95.3,
+                openings.get(2)
+        );
+
+        Application app6 = new Application(
+                new Date(),
+                "Laura", "Smith",
+                "laura.smith@example.com",
+                "+38766123456",
+                "https://example.com/cv/laurasmith",
+                "Pending",
+                70.8,
+                openings.get(2)
+        );
+
+        applicationRepository.saveAll(List.of(app1, app2, app3, app4, app5, app6));
+
+        log.info("6 demo Applications successfully inserted into the database.");
+    }
+
+
+/*    @Override
+    public void run(String... args) throws Exception {
 
         List<Opening> openings = openingRepository.findAll();
 
@@ -48,5 +129,5 @@ public class ApplicationRepositoryCommandLineRunner implements CommandLineRunner
         log.info("Applications unesene u bazu!");
         //statisticsService.logStatistics();
 
-    }
+    }*/
 }

@@ -61,13 +61,6 @@ public class RecordController {
         return CollectionModel.of(records, linkTo(methodOn(RecordController.class).all()).withSelfRel());
     }
 
-    /*    public CollectionModel<EntityModel<RecordDTO>> all() {
-        List<EntityModel<RecordDTO>> records = recordRepository.findAll().stream()
-                .map(record -> recordModelAssembler.toModel(modelMapper.map(record, RecordDTO.class)))
-                .collect(Collectors.toList());
-        return CollectionModel.of(records, linkTo(methodOn(RecordController.class).all()).withSelfRel());
-    }*/
-
     @GetMapping("/records/{id}")
     @Operation(summary = "Retrieve a record by ID", description = "Fetches details of a specific record by its ID")
     @ApiResponses(value = {
@@ -83,14 +76,14 @@ public class RecordController {
         }
         return recordModelAssembler.toModel(dto);
     }
-    /*public EntityModel<RecordDTO> one(@PathVariable Integer id) {
-        Record record = recordRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException(id));
-        RecordDTO recordDTO = modelMapper.map(record, RecordDTO.class);
-        return recordModelAssembler.toModel(recordDTO);
-    }*/
 
     @PostMapping("/records/user/{userId}")
+    @Operation(summary = "Create a record for a user", description = "Creates a new employee record for a specific user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Record created successfully"),
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid input")
+    })
     public ResponseEntity<?> postRecord(@PathVariable Integer userId, @Valid @RequestBody Record record) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
@@ -107,19 +100,6 @@ public class RecordController {
                 .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
                 .body(entityModel);
     }
-
-
-/*    @PostMapping("/records")
-    public ResponseEntity<?> postRecord(@Valid @RequestBody Record record) {
-        Record savedRecord = recordRepository.save(record);
-
-        RecordDTO responseDTO = modelMapper.map(savedRecord, RecordDTO.class);
-
-        EntityModel<RecordDTO> entityModel = recordModelAssembler.toModel(responseDTO);
-        return ResponseEntity
-                .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
-                .body(entityModel);
-    }*/
 
     @PutMapping("/records/{id}")
     @Operation(summary = "Update a record", description = "Updates an existing employee record by its ID")
@@ -163,22 +143,12 @@ public class RecordController {
         return ResponseEntity.ok(entityModel);
     }
 
-    /*@DeleteMapping("records/{id}")
+    @DeleteMapping("/records/{id}")
     @Operation(summary = "Delete a record", description = "Deletes an employee record by its ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Request deleted"),
-            @ApiResponse(responseCode = "404", description = "Request not found")
+            @ApiResponse(responseCode = "200", description = "Record deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Record not found")
     })
-    public ResponseEntity<?> deleteRecord(@PathVariable Integer id) {
-        Record record = recordRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException(id));
-
-        recordRepository.delete(record);
-
-        return ResponseEntity.ok().body(Collections.singletonMap("message", "Record successfully deleted."));
-    }*/
-
-    @DeleteMapping("/records/{id}")
     public ResponseEntity<?> deleteRecord(@PathVariable Integer id) {
         Record record = recordRepository.findById(id)
                 .orElseThrow(() -> new RecordNotFoundException(id));
@@ -192,6 +162,10 @@ public class RecordController {
     }
 
     @GetMapping("/records_by_status")
+    @Operation(summary = "Retrieve records by status", description = "Fetches records filtered by employment status")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Records retrieved successfully")
+    })
     public CollectionModel<EntityModel<RecordDTO>> getRecords(@RequestParam(required = false) String status) {
         List<Record> records;
 
@@ -215,7 +189,50 @@ public class RecordController {
                 linkTo(methodOn(RecordController.class).getRecords(status)).withSelfRel());
     }
 
+    @PatchMapping("/records/{id}")
+    @Operation(summary = "Partially update a record", description = "Partially updates an employee record by its ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Record updated"),
+            @ApiResponse(responseCode = "404", description = "Record not found")
+    })
+    @Transactional
+    public ResponseEntity<?> patchRecord(@PathVariable Integer id, @RequestBody Record partialRecord) {
+        Record existingRecord = recordRepository.findById(id)
+                .orElseThrow(() -> new RecordNotFoundException(id));
 
+        if (partialRecord.getJmbg() != null) {
+            existingRecord.setJmbg(partialRecord.getJmbg());
+        }
+        if (partialRecord.getBirthDate() != null) {
+            existingRecord.setBirthDate(partialRecord.getBirthDate());
+        }
+        if (partialRecord.getContactNumber() != null) {
+            existingRecord.setContactNumber(partialRecord.getContactNumber());
+        }
+        if (partialRecord.getAddress() != null) {
+            existingRecord.setAddress(partialRecord.getAddress());
+        }
+        if (partialRecord.getEmail() != null) {
+            existingRecord.setEmail(partialRecord.getEmail());
+        }
+        if (partialRecord.getEmploymentDate() != null) {
+            existingRecord.setEmploymentDate(partialRecord.getEmploymentDate());
+        }
+        if (partialRecord.getStatus() != null) {
+            existingRecord.setStatus(partialRecord.getStatus());
+        }
+        if (partialRecord.getWorkingHours() != null) {
+            existingRecord.setWorkingHours(partialRecord.getWorkingHours());
+        }
+
+        Record updatedRecord = recordRepository.save(existingRecord);
+        RecordDTO updatedDTO = modelMapper.map(updatedRecord, RecordDTO.class);
+        if (updatedRecord.getUser() != null) {
+            updatedDTO.setUserUuid(updatedRecord.getUser().getUuid());
+        }
+
+        return ResponseEntity.ok(recordModelAssembler.toModel(updatedDTO));
+    }
 
 
     @PostMapping("/create_empty_record/{uuid}")

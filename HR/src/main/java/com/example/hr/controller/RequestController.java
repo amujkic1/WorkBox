@@ -55,6 +55,8 @@ public class RequestController {
     }
 
     @GetMapping("/requests")
+    @Operation(summary = "Retrieve all requests", description = "Returns a list of all employee requests")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved requests")
     public CollectionModel<EntityModel<RequestDTO>> all() {
         List<EntityModel<RequestDTO>> requests = requestRepository.findAll().stream()
                 .map(request -> {
@@ -191,6 +193,5 @@ public class RequestController {
         JsonNode patched = patch.apply(objectMapper.convertValue(targetDTO, JsonNode.class));
         return objectMapper.treeToValue(patched, RequestDTO.class);
     }
-
 
 }

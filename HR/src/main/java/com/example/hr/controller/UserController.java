@@ -122,29 +122,25 @@ public class UserController {
 
         if (user.getRecord() != null) {
             Record record = user.getRecord();
-            user.setRecord(null);       // raskid veze
+            user.setRecord(null);
             record.setUser(null);
-            recordRepository.delete(record);  // opcionalno – ako želiš automatski obrisati
+            recordRepository.delete(record);
         }
-
 
         List<Request> requests = requestRepository.findAllByUser(user);
         requestRepository.deleteAll(requests);
 
-        // 1. Remove user from user_openings (ManyToMany)
         for (Opening opening : user.getOpenings()) {
             opening.getUsers().remove(user);
         }
 
         user.getOpenings().clear();
 
-        // 2. Remove user from Opening
         List<Opening> openingWithOwnership = openingRepository.findAllByUser(user);
         for (Opening o : openingWithOwnership) {
             o.setUser(null);
         }
 
-        // 3. Finally delete the user
         userRepository.delete(user);
 
         return ResponseEntity.ok("User with ID " + id + " has been deleted successfully.");
