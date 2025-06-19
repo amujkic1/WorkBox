@@ -25,8 +25,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -70,11 +74,26 @@ public class CheckInRecordController {
 
     @PostMapping("/check_in_record")
     public ResponseEntity<?> newCheckInRecord(@RequestBody CheckInRecord newcheckInRecord){
-        EntityModel<CheckInRecord> entityModel = checkInRecordModelAssembler.toModel(checkInRecordRepository.save(newcheckInRecord));
+        Optional<User> userOpt = userRepository.findByUserUUID(newcheckInRecord.getUser().getUserUUID());
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        newcheckInRecord.setUser(userOpt.get());
+        CheckInRecord savedRecord = checkInRecordRepository.save(newcheckInRecord);
+        EntityModel<CheckInRecord> entityModel = checkInRecordModelAssembler.toModel(savedRecord);
+
+        return ResponseEntity
+                .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                .body(entityModel);
+
+        /*EntityModel<CheckInRecord> entityModel = checkInRecordModelAssembler.toModel(checkInRecordRepository.save(newcheckInRecord));
 
         return ResponseEntity.
                 created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).
                 body(entityModel);
+
+         */
     }
 
     @PutMapping("/check_in_record/{id}")
@@ -98,6 +117,7 @@ public class CheckInRecordController {
                 .body(entityModel);
     }
 
+    /*
     @PatchMapping(path = "/check_in_record/{id}", consumes = "application/json-patch+json")
     public ResponseEntity<?> updateCheckOutTime(@PathVariable Integer id, @RequestBody JsonPatch patch) {
         try {
@@ -118,6 +138,53 @@ public class CheckInRecordController {
             throw new RuntimeException(e.getMessage()+" Greška prilikom pronalaska sloga u patch metodi.");
         }
     }
+
+     */
+
+    @PatchMapping(path = "/check_in_record/{uuid}", consumes = "application/json-patch+json")
+    public ResponseEntity<?> updateCheckOutTime(@PathVariable String uuid, @RequestBody JsonPatch patch) {
+        try {
+            System.out.println("\n\n ***** PATCH *****************************************");
+            // Pronađi korisnika po UUID-u
+            Optional<User> user = userRepository.findByUserUUID(UUID.fromString(uuid));
+            System.out.println("User kojem odgovara ova izmjena: "+user.get().getUserUUID()+" "+user.get().getFirstName());
+
+            if (user.isEmpty()) {
+                return ResponseEntity.badRequest().body("User not found");
+            }
+
+
+            LocalDate localDate = LocalDate.now();
+            Date currentDate = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            //Optional<CheckInRecord> recordOpt = checkInRecordRepository.findByUserAndCheckInDate(user.get(), currentDate);
+            Optional<CheckInRecord> recordOpt = checkInRecordRepository.findTopByUserAndCheckInDateOrderByCheckInTimeDesc(user.get(), currentDate);
+
+            if (recordOpt.isEmpty()) {
+                return ResponseEntity.badRequest().body("Check-in record not found for user: " + uuid + " on " + currentDate);
+            }
+            System.out.println("\n Pronađeni rekord:"+recordOpt.get().getCheckInRecordId());
+
+            CheckInRecord checkInRecord = recordOpt.get();
+            CheckInRecord checkInRecordPatched = applyPatchToCheckInRecord(patch, checkInRecord);
+
+            // Ažuriraj zapis
+            CheckInRecord updatedCheckInRecord = checkInRecordService.updateCheckOutTime(checkInRecordPatched);
+            EntityModel<CheckInRecord> entityModel = checkInRecordModelAssembler.toModel(updatedCheckInRecord);
+
+            System.out.println("##################### KRAJ ##############################\n\n");
+            return ResponseEntity
+                    .created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri())
+                    .body(entityModel);
+
+        } catch (JsonPatchException | JsonProcessingException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error applying patch: " + e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
+
 
     private CheckInRecord applyPatchToCheckInRecord(JsonPatch patch, CheckInRecord checkInRecord) throws JsonPatchException, JsonProcessingException{
         ObjectMapper objectMapper = new ObjectMapper();
