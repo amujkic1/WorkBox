@@ -40,9 +40,18 @@ Funkcionalnosti pojedinih mikroservisa u okviru WorkBox aplikacije su navedene u
 * **Task submission** - Team members can submit completed tasks, which updates the status of the project.
 
 ### Demo video and documentation
-Visit the link below for a demo of WorkBox:
+Visit the link below for a demo of WorkBox:<br>
 https://drive.google.com/drive/folders/1E9YD5gGxO9Ka-4IJ9Kf9j-dZJ4RxEugM?usp=sharing
-Complete documentation can be found at the following link:
+
+Complete documentation can be found at the following link:<br>
+https://drive.google.com/drive/folders/1E9YD5gGxO9Ka-4IJ9Kf9j-dZJ4RxEugM?usp=drive_link
+<br>
+
+### Frontend repository
+The frontend repository is located at the following link:<br>
+https://github.com/amujkic1/WorkBox-Frontend
+<br>
+<br>
 
 
 ## Startup instructions
@@ -52,8 +61,19 @@ Complete documentation can be found at the following link:
 - Maven
 - Docker
 - Docker Desktop
+- Git
 
-### 🔧 Step 1: Build Each Microservice
+### 📂 Step 1: Clone project
+Clone backend and frontend repositories:
+```bash
+git clone git@github.com:amujkic1/WorkBox.git
+```
+```bash
+git clone git@github.com:amujkic1/WorkBox-Frontend.git
+```
+
+
+### 🔧 Step 2: Build Each Microservice
 Each microservice is an independent Maven project and must be built separately. Run the following commands from the root directory:
 
 ```bash
@@ -82,14 +102,14 @@ cd ../config
 mvn clean install
 ```
 
-### 📦 Step 2: Navigate to the Root Folder
+### 📦 Step 3: Navigate to the Root Folder
 Ensure you are in the root folder that contains the `docker-compose.yml` file:
 
 ```bash
 cd ..
 ```
 
-### 🐳 Step 3: Start All Services with Docker Compose
+### 🐳 Step 4: Start All Services with Docker Compose
 Run the following command:
 
 ```bash
