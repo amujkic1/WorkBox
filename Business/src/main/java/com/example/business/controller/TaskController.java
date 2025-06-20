@@ -148,6 +148,11 @@ public class TaskController {
         List<EntityModel<Task>> taskModels = tasks.stream()
                 .map(taskModelAssembler::toModel)
                 .collect(Collectors.toList());
+        try {
+            systemEventsClient.log("epeljto1", "GET", "Task", "200 OK");
+        } catch (Exception e) {
+            System.err.println("Failed to log to SystemEvents: " + e.getMessage());
+        }
         return ResponseEntity.ok(CollectionModel.of(taskModels,
                 linkTo(methodOn(TaskController.class).getTasksByProject(projectId)).withSelfRel()));
     }

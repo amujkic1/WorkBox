@@ -47,6 +47,68 @@ Complete documentation can be found at the following link:
 
 ## Startup instructions
 
+### 🛠️ Prerequisites
+- Java 21+
+- Maven
+- Docker
+- Docker Desktop
+
+### 🔧 Step 1: Build Each Microservice
+Each microservice is an independent Maven project and must be built separately. Run the following commands from the root directory:
+
+```bash
+cd Auth
+mvn clean install
+
+cd ../Business
+mvn clean install
+
+cd ../Finance
+mvn clean install
+
+cd ../HR
+mvn clean install
+
+cd ../SystemEventsServer
+mvn clean install
+
+cd ../EurekaServer
+mvn clean install
+
+cd ../api-gateway
+mvn clean install
+
+cd ../config
+mvn clean install
+```
+
+### 📦 Step 2: Navigate to the Root Folder
+Ensure you are in the root folder that contains the `docker-compose.yml` file:
+
+```bash
+cd ..
+```
+
+### 🐳 Step 3: Start All Services with Docker Compose
+Run the following command:
+
+```bash
+docker-compose up --build
+```
+
+This will start all services (including Eureka, Gateway, and all microservices) in Docker container.
+
+### ✅ Accessing the Application
+- **Eureka Server**: [http://localhost:8761](http://localhost:8761)
+- **API Gateway**: [http://localhost:8080](http://localhost:8080)
+
+### 🛑 Stop All Services
+To stop and remove all containers:
+
+```bash
+docker-compose down
+```
+
 
 
 
